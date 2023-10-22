@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "ES2021",         // Target ECMAScript version
+    "module": "ESNext",       // Module system to use
+    "moduleResolution": "node",
+    "emitDeclarationOnly": true,
+    "declaration": true,
+    "outDir": "./dist",         // Output directory for the transpiled JavaScript
+    "strict": true,             // Enables strict type-checking options
+    "esModuleInterop": true,    // Enables compatibility with ES modules for 'require'
+    "skipLibCheck": true,       // Skip type checking for declaration files in 'node_modules'
+    "forceConsistentCasingInFileNames": true,  // Enforce consistent casing for file names
+    "incremental": true
+  },
+  "include": ["src/**/*.ts", "bin"],  // Source files to include in the compilation
+  "exclude": ["node_modules"]  // Folders to exclude from compilation
+}

@@ -1,0 +1,65 @@
+{
+  "name": "project-builder-cli",
+  "version": "0.0.1",
+  "description": "Project Builder - modern, fast, powerful node.js web framework to build projects(@cli)",
+  "type": "module",
+  "engines": {
+    "node": ">= 16"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "bin": {
+    "builder": "bin/builder.js"
+  },
+  "scripts": {
+    "clean": "rimraf dist",
+    "build": "npm run clean && tsc --project tsconfig.json && rollup -c",
+    "build:watch": "tsc -p tsconfig.json --watch",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "prettier --write ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hyperxq/Project-builder-cli/tree/main"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{ts,js,json,md}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@angular-devkit/core": "^16.2.7",
+    "@angular-devkit/schematics": "^16.2.7",
+    "@angular-devkit/schematics-cli": "^16.2.7",
+    "ansi-colors": "^4.1.3",
+    "commander": "^11.1.0",
+    "inquirer": "^9.2.11",
+    "node-emoji": "^2.1.0",
+    "ora": "^7.0.1",
+    "typescript": "^5.2.2",
+    "yargs": "^17.7.2"
+  },
+  "devDependencies": {
+    "@swc/core": "^1.3.94",
+    "@types/inquirer": "^9.0.6",
+    "@types/node-emoji": "^2.1.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.0.2",
+    "prettier": "^3.0.3",
+    "rimraf": "^5.0.5",
+    "rollup": "^3.29.4",
+    "rollup-plugin-add-shebang": "^0.3.1",
+    "rollup-plugin-copy": "^3.5.0",
+    "rollup-plugin-swc3": "^0.10.3"
+  }
+}
