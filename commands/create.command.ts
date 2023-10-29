@@ -7,14 +7,21 @@ export class CreateCommand extends AbstractCommand {
     program
       .command('create [schema-id]')
       .alias('c')
-      // TODO: we need to get the right description depends on the command
-      // .description(await this.buildDescription())
+      // TODO: we need to get the right description depends on the framework flag
+      .description(
+        'Create a workspace and execute many schematic depends on the schema-id',
+      )
       .option(
         '--dry-run',
         'Report actions that would be taken without writing out results.',
         false,
       )
       .option('--interactive', 'Enable interactive input prompts.', true)
+      .option(
+        '--f, --framework',
+        'Determinate which framework use to create the workspace. [choices: "Angular", "Nestjs", "VanillaTs"]',
+        'Angular',
+      )
 
       .option(
         '--defaults',
