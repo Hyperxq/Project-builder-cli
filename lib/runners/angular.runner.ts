@@ -3,9 +3,9 @@ import { createRequire } from 'node:module';
 
 const require = createRequire(import.meta.url);
 
-export class SchematicRunner extends AbstractRunner {
+export class AngularRunner extends AbstractRunner {
   constructor() {
-    super(`node`, [`"${SchematicRunner.findClosestSchematicsBinary()}"`]);
+    super(`node`, [`"${AngularRunner.findClosestSchematicsBinary()}"`]);
   }
 
   public static getModulePaths() {
@@ -14,12 +14,10 @@ export class SchematicRunner extends AbstractRunner {
 
   public static findClosestSchematicsBinary(): string {
     try {
-      return require.resolve(
-        '@angular-devkit/schematics-cli/bin/schematics.js',
-      );
+      return require.resolve('@angular/cli/bin/ng.js');
     } catch (e) {
       console.log(e);
-      throw new Error("'schematics' binary path could not be found!");
+      throw new Error("'ng' binary path could not be found!");
     }
   }
 }

@@ -36,6 +36,9 @@ export default [
       'path',
       'child_process',
       'node:module',
+      '@angular/cli',
+      '@nestjs/cli',
+      '@angular-devkit/schematics-cli',
     ],
   },
   {
@@ -102,7 +105,35 @@ export default [
       'node-emoji',
       'child_process',
       'node:module',
+      '@angular/cli',
+      '@nestjs/cli',
+      '@angular-devkit/schematics-cli',
     ],
+  },
+  {
+    input: {
+      emojis: 'lib/ui/emojis.ts',
+      index: 'lib/ui/index.ts',
+      messages: 'lib/ui/messages.ts',
+      prefixes: 'lib/ui/prefixes.ts',
+    },
+    output: {
+      output: {
+        dir: 'dist/lib/ui',
+        format: 'es',
+      },
+      plugins: [
+        swc({
+          configFile: '.swcrc',
+        }),
+        resolve({
+          preferBuiltins: true,
+        }),
+        builtins(),
+        globals(),
+      ],
+    },
+    external: ['node-emoji'],
   },
   {
     input: 'src/index.ts', // Replace with the entry point of your CLI
