@@ -10,70 +10,93 @@ export class CreateCommand extends AbstractCommand {
       // TODO: we need to get the right description depends on the command
       // .description(await this.buildDescription())
       .option(
-        '--newProjectRoot [newProjectRoot]',
-        'The path where new projects will be created, relative to the new workspace root.',
+        '--dry-run',
+        'Report actions that would be taken without writing out results.',
+        false,
       )
+      .option('--interactive', 'Enable interactive input prompts.', true)
+
       .option(
-        '--inlineStyle [inlineStyle]',
-        'Include styles inline in the component TS file. By default, an external styles file is created and referenced in the component TypeScript file.',
+        '--defaults',
+        'Disable interactive input prompts for options with a default.',
+        false,
       )
+
+      .option('--force', 'Force overwriting of existing files.', false)
+      .option('-c, --collection', 'Schematics collection to use.')
+
+      .option('--commit', 'Initial git repository commit information.', true)
+
       .option(
-        '--inlineTemplate [inlineTemplate]',
-        'Include template inline in the component TS file. By default, an external template file is created and referenced in the component TypeScript file.',
-      )
-      .option(
-        '--viewEncapsulation [viewEncapsulation]',
-        'The view encapsulation strategy to use in the initial project.',
-      )
-      .option('--routing [routing]', 'Enable routing in the initial project.')
-      .option(
-        '--prefix [prefix]',
-        'The prefix to apply to generated selectors for the initial project.',
-        'app',
-      )
-      .option(
-        '--skipTests [skipTests]',
-        'Do not generate "spec.ts" test files for the new project.',
-      )
-      .option(
-        '--createApplication [createApplication]',
+        '--createApplication',
         "Create a new initial application project in the 'src' folder of the new workspace. When false, creates an empty workspace with no initial application. You can then use the generate application command so that all applications are created in the projects folder.",
         true,
       )
+
+      .option('--directory', 'The directory name to create the workspace in.')
+      .option(
+        '--inlineStyle',
+        'Include styles inline in the component TS file. By default, an external styles file is created and referenced in the component TypeScript file.',
+      )
+
+      .option(
+        '-t, --inline-template',
+        'Include template inline in the component TS file. By default, an external template file is created and referenced in the component TypeScript file.',
+      )
+
+      .option(
+        '--minimal',
+        ' Create a workspace without any testing frameworks. (Use for learning purposes only.)',
+        false,
+      )
+      .option(
+        '--newProjectRoot [newProjectRoot]',
+        'The path where new projects will be created, relative to the new workspace root.',
+        'projects',
+      )
+      .option(
+        '--packageManager [packageManager]',
+        'The package manager used to install dependencies.  [choices: "npm", "yarn", "pnpm", "cnpm"]',
+      )
+      .option(
+        '-p, --prefix',
+        'The prefix to apply to generated selectors for the initial project.',
+        'app',
+      )
+
+      .option('--routing', 'Enable routing in the initial project.')
+      .option('-g, --skip-git', 'Do not initialize a git repository.', false)
+      .option('--skip-install', 'Skip package installation.', false)
+      .option(
+        '-S, --skip-tests',
+        'Do not generate "spec.ts" test files for the new project.',
+        false,
+      )
+
+      .option(
+        '--standalone [standalone]',
+        'Creates an application based upon the standalone API, without NgModules.',
+        true,
+      )
+
+      .option(
+        '--strict [strict]',
+        'Creates a workspace with stricter type checking and stricter bundle budgets settings. This setting helps improve maintainability and catch bugs ahead of time.',
+        true,
+      )
+
       .option(
         '--style [style]',
-        'The file extension or preprocessor to use for style files.',
+        'The file extension or preprocessor to use for style files.  [choices: "css", "scss", "sass", "less"]',
       )
       .option(
         '--ssr [ssr]',
         'Creates an application with Server-Side Rendering (SSR) and Static Site Generation (SSG/Prerendering) enabled',
       )
       .option(
-        '--standalone [standalone]',
-        'Creates an application based upon the standalone API, without NgModules.',
-        true,
+        '--viewEncapsulation [viewEncapsulation]',
+        'The view encapsulation strategy to use in the initial project. [choices: "Emulated", "None", "ShadowDom"]',
       )
-      .option(
-        '--strict [strict]',
-        'Creates a workspace with stricter type checking and stricter bundle budgets settings. This setting helps improve maintainability and catch bugs ahead of time.',
-      )
-      .option(
-        '--packageManager [packageManager]',
-        'The package manager used to install dependencies.',
-      )
-      .option(
-        '--directory [directory]',
-        'The directory name to create the workspace in.',
-      )
-      .option(
-        '-d, --dry-run',
-        'Report actions that would be taken without writing out results.',
-      )
-      .option(
-        '-c, --collection [collectionName]',
-        'Schematics collection to use.',
-      )
-      .option('-s, --skip-install', 'Skip package installation.', false)
 
       .action(async (schemaId: string, command: { [key: string]: any }) => {
         console.log({
