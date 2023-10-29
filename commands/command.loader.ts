@@ -1,23 +1,22 @@
 import * as chalk from 'chalk';
-import {Command, program} from 'commander';
-import {GenerateCommand} from "./generate.command";
-import {GenerateAction} from "../actions";
+import {Command} from 'commander';
+import {ExecuteAction, GenerateAction, CreateAction} from "../actions";
 import {ERROR_PREFIX} from "../lib/ui";
-import {colors} from "../lib/utils";
+import {colors} from "../lib/utils"
+import {ExecuteCommand} from "./execute.command";
+import {GenerateCommand} from "./generate.command";
+import {CreateCommand} from "./create.command";
 
 export class CommandLoader {
-    public static async load(): Promise<void> {
-        // new NewCommand(new NewAction()).load(program);
-        // new BuildCommand(new BuildAction()).load(program);
-        // new StartCommand(new StartAction()).load(program);
-        // new InfoCommand(new InfoAction()).load(program);
-        // new AddCommand(new AddAction()).load(program);
-        await new GenerateCommand(new GenerateAction()).load();
+    public static async load(program: Command): Promise<void> {
+        await new GenerateCommand(new GenerateAction()).load(program);
+        await new ExecuteCommand(new ExecuteAction()).load(program);
+        await new CreateCommand(new CreateAction()).load(program);
 
-        this.handleInvalidCommand();
+        this.handleInvalidCommand(program);
     }
 
-    private static handleInvalidCommand() {
+    private static handleInvalidCommand(program: Command) {
         program.on('command:*', () => {
             console.error(
                 `\n${ERROR_PREFIX} Invalid command: ${colors.red('%s')}`,
