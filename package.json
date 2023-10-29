@@ -2,7 +2,6 @@
   "name": "project-builder-cli",
   "version": "0.0.1",
   "description": "Project Builder - modern, fast, powerful node.js web framework to build projects(@cli)",
-  "type": "module",
   "engines": {
     "node": ">= 16"
   },
@@ -14,9 +13,9 @@
   },
   "scripts": {
     "clean": "rimraf dist",
-    "build": "npm run clean && tsc --project tsconfig.json && rollup -c",
-    "build:watch": "tsc -p tsconfig.json --watch",
+    "build": "npm run clean && tsc --p tsconfig.json --outDir dist --declaration true && rollup -c --bundleConfigAsCjs",
     "testLocal": "npm run build && cd dist && npm link",
+    "build:watch": "tsc -p tsconfig.json --watch",
     "test": "echo \"Error: no test specified\" && exit 1",
     "format": "prettier --write ."
   },
@@ -47,15 +46,16 @@
     "@schematics/angular": "^16.2.8",
     "ansi-colors": "^4.1.3",
     "commander": "^11.1.0",
-    "inquirer": "^9.2.11",
+    "inquirer": "8.2.6",
     "node-emoji": "^2.1.0",
-    "ora": "^7.0.1",
+    "ora": "5.4.1",
     "typescript": "^5.2.2",
     "yargs": "^17.7.2"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-typescript": "^11.1.5",
     "@swc/core": "^1.3.94",
     "@types/inquirer": "^9.0.6",
     "@types/node-emoji": "^2.1.0",
@@ -63,11 +63,10 @@
     "lint-staged": "^15.0.2",
     "prettier": "^3.0.3",
     "rimraf": "^5.0.5",
-    "rollup": "^3.29.4",
+    "rollup": "3.29.4",
     "rollup-plugin-add-shebang": "^0.3.1",
     "rollup-plugin-copy": "^3.5.0",
     "rollup-plugin-node-builtins": "^2.1.2",
-    "rollup-plugin-node-globals": "^1.4.0",
-    "rollup-plugin-swc3": "^0.10.3"
+    "rollup-plugin-node-globals": "^1.4.0"
   }
 }

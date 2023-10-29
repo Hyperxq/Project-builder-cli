@@ -1,9 +1,10 @@
-import swc from 'rollup-plugin-swc3';
 import copy from 'rollup-plugin-copy';
 import addShebang from 'rollup-plugin-add-shebang';
 import resolve from '@rollup/plugin-node-resolve';
 import builtins from 'rollup-plugin-node-builtins';
 import globals from 'rollup-plugin-node-globals';
+import commonjs from '@rollup/plugin-commonjs';
+import typescript from '@rollup/plugin-typescript';
 
 export default [
   {
@@ -15,15 +16,12 @@ export default [
     },
     output: {
       dir: 'dist/actions',
-      format: 'es',
+      format: 'cjs',
     },
     plugins: [
-      swc({
-        configFile: '.swcrc',
-      }),
-      resolve({
-        preferBuiltins: true,
-      }),
+      typescript(), // Convert TypeScript to JavaScript
+      commonjs(), // Convert CommonJS modules to ES6
+      resolve(), // Locate and use modules in node_modules
       builtins(),
       globals(),
     ],
@@ -52,15 +50,12 @@ export default [
     },
     output: {
       dir: 'dist/commands',
-      format: 'es',
+      format: 'cjs',
     },
     plugins: [
-      swc({
-        configFile: '.swcrc',
-      }),
-      resolve({
-        preferBuiltins: true,
-      }),
+      typescript(), // Convert TypeScript to JavaScript
+      commonjs(), // Convert CommonJS modules to ES6
+      resolve(), // Locate and use modules in node_modules
       builtins(),
       globals(),
     ],
@@ -80,17 +75,14 @@ export default [
     input: 'bin/builder.ts',
     output: {
       dir: 'dist/bin',
-      format: 'es',
+      format: 'cjs',
     },
     plugins: [
-      swc({
-        configFile: '.swcrc',
-      }),
+      typescript(), // Convert TypeScript to JavaScript
+      commonjs(), // Convert CommonJS modules to ES6
+      resolve(), // Locate and use modules in node_modules
       addShebang({
         include: 'dist/bin/builder.js',
-      }),
-      resolve({
-        preferBuiltins: true,
       }),
       builtins(),
       globals(),
@@ -111,42 +103,17 @@ export default [
     ],
   },
   {
-    input: {
-      emojis: 'lib/ui/emojis.ts',
-      index: 'lib/ui/index.ts',
-      messages: 'lib/ui/messages.ts',
-      prefixes: 'lib/ui/prefixes.ts',
-    },
-    output: {
-      output: {
-        dir: 'dist/lib/ui',
-        format: 'es',
-      },
-      plugins: [
-        swc({
-          configFile: '.swcrc',
-        }),
-        resolve({
-          preferBuiltins: true,
-        }),
-        builtins(),
-        globals(),
-      ],
-    },
-    external: ['node-emoji'],
-  },
-  {
     input: 'src/index.ts', // Replace with the entry point of your CLI
     output: [
       {
         dir: 'dist/lib',
-        format: 'es',
+        format: 'cjs',
       },
     ],
     plugins: [
-      swc({
-        configFile: '.swcrc',
-      }),
+      typescript(), // Convert TypeScript to JavaScript
+      commonjs(), // Convert CommonJS modules to ES6
+      resolve(), // Locate and use modules in node_modules
       copy({
         targets: [
           {
@@ -164,11 +131,106 @@ export default [
         ],
         hook: 'writeBundle',
       }),
-      resolve({
-        preferBuiltins: true,
-      }),
       builtins(),
       globals(),
     ],
+  },
+  {
+    input: {
+      index: 'lib/utils/index.ts',
+      color: 'lib/utils/color.ts',
+      formatting: 'lib/utils/formatting.ts',
+    },
+    output: {
+      dir: 'dist/lib/utils',
+      format: 'cjs',
+    },
+
+    external: ['node-emoji', 'path'],
+    plugins: [
+      typescript(), // Convert TypeScript to JavaScript
+      commonjs(), // Convert CommonJS modules to ES6
+      resolve(), // Locate and use modules in node_modules
+    ],
+  },
+  {
+    input: {
+      emojis: 'lib/ui/emojis.ts',
+      index: 'lib/ui/index.ts',
+      messages: 'lib/ui/messages.ts',
+      prefixes: 'lib/ui/prefixes.ts',
+    },
+    output: {
+      dir: 'dist/lib/ui',
+      format: 'cjs',
+    },
+    plugins: [
+      typescript(), // Convert TypeScript to JavaScript
+      commonjs(), // Convert CommonJS modules to ES6
+      resolve(), // Locate and use modules in node_modules
+      builtins(),
+      globals(),
+    ],
+    external: ['node-emoji'],
+  },
+  {
+    input: {
+      index: 'lib/readers/index.ts',
+      reader: 'lib/readers/reader.ts',
+    },
+    output: {
+      dir: 'dist/lib/readers',
+      format: 'cjs',
+    },
+    plugins: [
+      typescript(), // Convert TypeScript to JavaScript
+      commonjs(), // Convert CommonJS modules to ES6
+    ],
+    external: ['node-emoji'],
+  },
+  {
+    input: {
+      'angular-configuration':
+        'lib/configuration/angular-configuration.loader.ts',
+      index: 'lib/configuration/index.ts',
+      'configuration.loader': 'lib/configuration/configuration.loader.ts',
+      'nest-configuration.loader':
+        'lib/configuration/nest-configuration.loader.ts',
+    },
+    output: {
+      dir: 'dist/lib/configuration',
+      format: 'cjs',
+    },
+    plugins: [
+      typescript(), // Convert TypeScript to JavaScript
+      commonjs(), // Convert CommonJS modules to ES6
+      resolve(), // Locate and use modules in node_modules
+      builtins(),
+      globals(),
+    ],
+    external: ['node-emoji'],
+  },
+  {
+    input: {
+      'abstract.runner': 'lib/runners/abstract.runner.ts',
+      index: 'lib/runners/index.ts',
+      'angular.runner': 'lib/runners/angular.runner.ts',
+      'npm.runner': 'lib/runners/npm.runner.ts',
+      'pnpm.runner': 'lib/runners/pnpm.runner.ts',
+      'schematic.runner': 'lib/runners/schematic.runner.ts',
+      'yarn.runner': 'lib/runners/yarn.runner.ts',
+    },
+    output: {
+      dir: 'dist/lib/configuration',
+      format: 'cjs',
+    },
+    plugins: [
+      typescript(), // Convert TypeScript to JavaScript
+      commonjs(), // Convert CommonJS modules to ES6
+      resolve(), // Locate and use modules in node_modules
+      builtins(),
+      globals(),
+    ],
+    external: ['node-emoji'],
   },
 ];
