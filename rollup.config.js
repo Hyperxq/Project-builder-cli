@@ -9,17 +9,18 @@ import typescript from '@rollup/plugin-typescript';
 export default [
   {
     input: {
-      abstract: 'actions/abstract.action.ts',
-      create: 'actions/create.action.ts',
-      generate: 'actions/generate.action.ts',
-      index: 'commands/index.ts',
+      'abstract.action': 'actions/abstract.action.ts',
+      'create.action': 'actions/create.action.ts',
+      'generate.action': 'actions/generate.action.ts',
+      'execute.action': 'actions/execute.action.ts',
+      index: 'actions/index.ts',
     },
     output: {
       dir: 'dist/actions',
       format: 'cjs',
     },
     plugins: [
-      typescript(), // Convert TypeScript to JavaScript
+      typescript({ outputToFilesystem: false }), // Convert TypeScript to JavaScript
       commonjs(), // Convert CommonJS modules to ES6
       resolve(), // Locate and use modules in node_modules
       builtins(),
@@ -41,11 +42,11 @@ export default [
   },
   {
     input: {
-      abstract: 'commands/abstract.command.ts',
-      create: 'commands/create.command.ts',
-      generate: 'commands/generate.command.ts',
-      loader: 'commands/command.loader.ts',
-      input: 'commands/command.input.ts',
+      'abstract.command': 'commands/abstract.command.ts',
+      'create.command': 'commands/create.command.ts',
+      'generate.command': 'commands/generate.command.ts',
+      'command.loader': 'commands/command.loader.ts',
+      'command.input': 'commands/command.input.ts',
       index: 'commands/index.ts',
     },
     output: {
@@ -53,7 +54,7 @@ export default [
       format: 'cjs',
     },
     plugins: [
-      typescript(), // Convert TypeScript to JavaScript
+      typescript({ outputToFilesystem: false }), // Convert TypeScript to JavaScript
       commonjs(), // Convert CommonJS modules to ES6
       resolve(), // Locate and use modules in node_modules
       builtins(),
@@ -69,6 +70,9 @@ export default [
       'node-emoji',
       'child_process',
       'node:module',
+      '@angular/cli',
+      '@nestjs/cli',
+      '@angular-devkit/schematics-cli',
     ],
   },
   {
@@ -172,6 +176,29 @@ export default [
       globals(),
     ],
     external: ['node-emoji'],
+  },
+  {
+    input: {
+      index: 'lib/CLI/index.ts',
+      'abstract.cli': 'lib/CLI/abstract.cli.ts',
+      'angular.cli': 'lib/CLI/angular.cli.ts',
+      'nestjs.cli': 'lib/CLI/nestjs.cli.ts',
+      'schematics.cli': 'lib/CLI/schematics.cli.ts',
+      'cli.enum': 'lib/CLI/cli.enum.ts',
+      'cli.interfaces': 'lib/CLI/cli.interfaces.ts',
+      'cli.factory': 'lib/CLI/cli.factory.ts',
+    },
+    output: {
+      dir: 'dist/lib/CLI',
+      format: 'cjs',
+    },
+    plugins: [typescript(), commonjs(), resolve(), builtins(), globals()],
+    external: [
+      'child_process',
+      '@angular/cli',
+      '@nestjs/cli',
+      '@angular-devkit/schematics-cli',
+    ],
   },
   {
     input: {

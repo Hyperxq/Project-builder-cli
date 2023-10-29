@@ -6,11 +6,11 @@ import { AngularCollection } from './angular.collection';
 import { CustomCollection } from './custom.collection';
 
 export class CollectionFactory {
-  public static create(collection: Collection | string): AbstractCollection {
-    //TODO: What happen if we call different CLI, like Nestjs or Angular CLI?
-    const schematicRunner = RunnerFactory.create(
-      Runner.SCHEMATIC,
-    ) as SchematicRunner;
+  public static create(
+    collection: Collection | string,
+    runner: Runner = Runner.SCHEMATIC,
+  ): AbstractCollection {
+    const schematicRunner = RunnerFactory.create(runner) as SchematicRunner;
 
     switch (collection) {
       case Collection.NESTJS:

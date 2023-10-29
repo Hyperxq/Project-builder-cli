@@ -4,6 +4,7 @@ import { SchematicOption } from './schematic.option';
 import { Schematic } from './schematic';
 
 export class AngularCollection extends AbstractCollection {
+  //Generate commands
   private static schematics: Schematic[] = [
     {
       name: 'application',

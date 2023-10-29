@@ -4,4 +4,3 @@ export * from './command.loader';
 export * from './generate.command';
 export * from './create.command';
 export * from './execute.command';
-// export * from './create.command';
