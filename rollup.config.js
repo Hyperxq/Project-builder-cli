@@ -13,6 +13,7 @@ export default [
       'create.action': 'actions/create.action.ts',
       'generate.action': 'actions/generate.action.ts',
       'execute.action': 'actions/execute.action.ts',
+      'actions.interfaces': 'actions/actions.interfaces.ts',
       index: 'actions/index.ts',
     },
     output: {
@@ -38,6 +39,7 @@ export default [
       '@angular/cli',
       '@nestjs/cli',
       '@angular-devkit/schematics-cli',
+      'axios',
     ],
   },
   {

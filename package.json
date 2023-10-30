@@ -21,7 +21,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Hyperxq/Project-builder-cli/tree/main"
+    "url": "git+https://github.com/Hyperxq/Project-builder-cli"
   },
   "husky": {
     "hooks": {
@@ -42,9 +42,11 @@
     "@angular-devkit/schematics": "^16.2.7",
     "@angular-devkit/schematics-cli": "^16.2.7",
     "@angular/cli": "^16.2.8",
+    "@danils/angular-builder": "^0.0.67",
     "@nestjs/cli": "^10.2.0",
     "@schematics/angular": "^16.2.8",
     "ansi-colors": "^4.1.3",
+    "axios": "^1.6.0",
     "commander": "^11.1.0",
     "inquirer": "8.2.6",
     "node-emoji": "^2.1.0",

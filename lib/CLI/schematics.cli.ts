@@ -4,7 +4,7 @@ import { Input } from '../../commands';
 
 export class SchematicsCli extends AbstractCli {
   constructor() {
-    super(SchematicsCli.findClosestBinary());
+    super(`"${SchematicsCli.findClosestBinary()}"`);
   }
 
   static findClosestBinary(): string {
@@ -24,7 +24,7 @@ export class SchematicsCli extends AbstractCli {
     inputs,
     flags,
   }: SchematicCommandOptions): string {
-    return `schematics ${collection}:${schematic} ${this.buildInputs(
+    return `${collection}:${schematic} ${this.buildInputs(
       inputs,
     )} ${this.buildFlags(flags)}`;
   }

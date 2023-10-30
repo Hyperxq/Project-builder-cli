@@ -3,7 +3,7 @@ import { Input } from '../../commands';
 
 export class NestJSCli extends AbstractCli {
   constructor() {
-    super(NestJSCli.findClosestBinary());
+    super(`"${NestJSCli.findClosestBinary()}"`);
   }
 
   static findClosestBinary(): string {

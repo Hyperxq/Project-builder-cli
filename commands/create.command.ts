@@ -98,8 +98,8 @@ export class CreateCommand extends AbstractCommand {
 
       .action(
         async (
-          schemaId: string,
           workspaceName: string,
+          schemaId: string,
           command: { [key: string]: any },
         ) => {
           const {
