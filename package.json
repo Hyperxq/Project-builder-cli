@@ -1,7 +1,8 @@
 {
-  "name": "project-builder-cli",
+  "name": "@danils/project-builder-cli",
   "version": "0.0.1",
   "description": "Project Builder - modern, fast, powerful node.js web framework to build projects(@cli)",
+  "private": false,
   "engines": {
     "node": ">= 16"
   },
@@ -17,7 +18,8 @@
     "testLocal": "npm run build && cd dist && npm link",
     "build:watch": "tsc -p tsconfig.json --watch",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "publish": "npm run build && cd dist && npm publish --access=public"
   },
   "repository": {
     "type": "git",
@@ -34,8 +36,12 @@
       "git add"
     ]
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "Schematics",
+    "Angular 16+",
+    "Nestjs"
+  ],
+  "author": "Hyperxq",
   "license": "ISC",
   "dependencies": {
     "@angular-devkit/core": "^16.2.7",
