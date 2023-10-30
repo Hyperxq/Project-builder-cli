@@ -137,6 +137,15 @@ export default [
         ],
         hook: 'writeBundle',
       }),
+      copy({
+        targets: [
+          {
+            src: 'README.md',
+            dest: 'dist',
+          },
+        ],
+        hook: 'writeBundle',
+      }),
       builtins(),
       globals(),
     ],
