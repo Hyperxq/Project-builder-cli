@@ -1,5 +1,6 @@
 import { AbstractCli } from './abstract.cli';
 import { Input } from '../../commands';
+import { execSync } from 'child_process';
 
 export class AngularCli extends AbstractCli {
   constructor() {
@@ -8,7 +9,9 @@ export class AngularCli extends AbstractCli {
 
   static findClosestBinary(): string {
     try {
-      return require.resolve('@angular/cli/bin/ng.js');
+      // NOTE: As a requirement, every user needs to install the ng cli
+      const globalNodeModulesPath = execSync('npm root -g').toString().trim();
+      return require.resolve(globalNodeModulesPath + '/@angular/cli/bin/ng.js');
     } catch (e) {
       console.log(e);
       throw new Error("'ng' binary path could not be found!");
