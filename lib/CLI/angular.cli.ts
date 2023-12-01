@@ -1,6 +1,8 @@
 import { AbstractCli } from './abstract.cli';
 import { Input } from '../../commands';
 import { execSync } from 'child_process';
+import { colors } from '../utils';
+import { EMOJIS } from '../ui';
 
 export class AngularCli extends AbstractCli {
   constructor() {
@@ -14,7 +16,12 @@ export class AngularCli extends AbstractCli {
       return require.resolve(globalNodeModulesPath + '/@angular/cli/bin/ng.js');
     } catch (e) {
       console.log(e);
-      throw new Error("'ng' binary path could not be found!");
+      throw new Error(
+        `${colors.blue(
+          EMOJIS['BROKEN_HEART'] +
+            "Angular cli doesn't install, please execute:",
+        )} ${colors.green('npm i -g @angular/cli')}`,
+      );
     }
   }
 

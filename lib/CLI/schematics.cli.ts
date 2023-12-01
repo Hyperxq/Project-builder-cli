@@ -1,6 +1,8 @@
 import { AbstractCli } from './abstract.cli';
 import { SchematicCommandOptions } from './cli.interfaces';
 import { Input } from '../../commands';
+import { colors } from '../utils';
+import { EMOJIS } from '../ui';
 
 export class SchematicsCli extends AbstractCli {
   constructor() {
@@ -14,7 +16,11 @@ export class SchematicsCli extends AbstractCli {
       );
     } catch (e) {
       console.log(e);
-      throw new Error("'schematics' binary path could not be found!");
+      throw new Error(
+        `${colors.red(
+          `${EMOJIS['BROKEN_HEART']} Schematics CLI doesn't installed, please execute:`,
+        )} ${colors.green('npm i -g @angular-devkit/schematics-cli')}`,
+      );
     }
   }
 

@@ -1,11 +1,6 @@
 import { Input } from '../commands';
 import { AbstractAction } from './abstract.action';
-import {
-  AbstractCollection,
-  Collection,
-  CollectionFactory,
-  SchematicOption,
-} from '../lib/schematics';
+import { Collection } from '../lib/schematics';
 import { colors } from '../lib/utils';
 
 export class GenerateAction extends AbstractAction {
@@ -30,19 +25,19 @@ const generateFiles = async (inputs: Input[]) => {
   // Here is the collection factory
   // The factory only checks the schematics that the library has.
   // TODO: We need to support another frameworks
-  const collection: AbstractCollection =
-    CollectionFactory.create(collectionOption);
-
-  // const relativePath = getRelativePath();
-  const schematicOptions: SchematicOption[] = mapSchematicOptions(inputs);
+  // const collection: AbstractCollection =
+  //   CollectionFactory.create(collectionOption);
+  //
+  // // const relativePath = getRelativePath();
+  // const schematicOptions: SchematicOption[] = mapSchematicOptions(inputs);
 
   try {
-    const schematicInput = inputs.find((input) => input.name === 'schematic');
-    if (!schematicInput) {
-      throw new Error('You need a schematic name to execute this command');
-    }
-
-    await collection.execute(schematicInput.value as string, schematicOptions);
+    // const schematicInput = inputs.find((input) => input.name === 'schematic');
+    // if (!schematicInput) {
+    //   throw new Error('You need a schematic name to execute this command');
+    // }
+    //
+    // await collection.execute(schematicInput.value as string, schematicOptions);
   } catch (error) {
     if (error && (error as { message: string }).message) {
       console.error(colors.red((error as { message: string }).message));
@@ -50,13 +45,13 @@ const generateFiles = async (inputs: Input[]) => {
   }
 };
 
-const mapSchematicOptions = (inputs: Input[]): SchematicOption[] => {
-  const excludedInputNames = ['schematic', 'spec', 'flat', 'specFileSuffix'];
-  const options: SchematicOption[] = [];
-  inputs.forEach((input) => {
-    if (!excludedInputNames.includes(input.name) && input.value !== undefined) {
-      options.push(new SchematicOption(input.name, input.value));
-    }
-  });
-  return options;
-};
+// const mapSchematicOptions = (inputs: Input[]): SchematicOption[] => {
+//   const excludedInputNames = ['schematic', 'spec', 'flat', 'specFileSuffix'];
+//   const options: SchematicOption[] = [];
+//   inputs.forEach((input) => {
+//     if (!excludedInputNames.includes(input.name) && input.value !== undefined) {
+//       options.push(new SchematicOption(input.name, input.value));
+//     }
+//   });
+//   return options;
+// };
