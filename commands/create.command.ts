@@ -5,15 +5,13 @@ import { Input } from './command.input';
 export class CreateCommand extends AbstractCommand {
   public async load(program: Command): Promise<void> {
     program
-      .command('create [workspace-name] [schema-id]')
+      .command('create [workspace-name] [template-id]')
       .alias('c')
       // TODO: we need to get the right description depends on the framework flag
       .description(
         'Create a workspace and execute many schematic depends on the schema-id',
       )
       .addHelpCommand('create angular --help', 'show assistance')
-      .option('--angular', 'Builder cli will use angular cli')
-      .option('--nestjs', 'Builder cli will use angular cli')
       // .action((framework, options) => {
       //   if (options.helpCustom) {
       //     displayCustomHelp(framework);
@@ -109,96 +107,99 @@ export class CreateCommand extends AbstractCommand {
       .action(
         async (
           workspaceName: string,
-          schemaId: string,
+          templateId: string,
           command: { [key: string]: any },
         ) => {
-          const {
-            dryRun,
-            interactive,
-            framework,
-            defaults,
-            force,
-            collection,
-            commit,
-            createApplication,
-            directory,
-            inlineStyle,
-            inlineTemplate,
-            minimal,
-            newProjectRoot,
-            packageManager,
-            prefix,
-            routing,
-            skipGit,
-            skipInstall,
-            skipTests,
-            standalone,
-            strict,
-            style,
-            ssr,
-            viewEncapsulation,
-          } = command;
+          // const {
+          //   dryRun,
+          //   interactive,
+          //   framework,
+          //   defaults,
+          //   force,
+          //   collection,
+          //   commit,
+          //   createApplication,
+          //   directory,
+          //   inlineStyle,
+          //   inlineTemplate,
+          //   minimal,
+          //   newProjectRoot,
+          //   packageManager,
+          //   prefix,
+          //   routing,
+          //   skipGit,
+          //   skipInstall,
+          //   skipTests,
+          //   standalone,
+          //   strict,
+          //   style,
+          //   ssr,
+          //   viewEncapsulation,
+          // } = command;
           const options: Input[] = [];
-          //TODO: refactor this
-          if (dryRun !== undefined)
-            options.push({ name: 'dry-run', value: dryRun });
-          if (interactive !== undefined)
-            options.push({ name: 'interactive', value: interactive });
-          if (framework !== undefined)
-            options.push({ name: 'framework', value: framework });
-          if (defaults !== undefined)
-            options.push({ name: 'defaults', value: defaults });
-          if (force !== undefined)
-            options.push({ name: 'force', value: force });
-          if (collection !== undefined)
-            options.push({ name: 'collection', value: collection });
-          if (commit !== undefined)
-            options.push({ name: 'commit', value: commit });
-          if (createApplication !== undefined)
-            options.push({
-              name: 'createApplication',
-              value: createApplication,
-            });
-          if (directory !== undefined)
-            options.push({ name: 'directory', value: directory });
-          if (inlineStyle !== undefined)
-            options.push({ name: 'inlineStyle', value: inlineStyle });
-          if (inlineTemplate !== undefined)
-            options.push({ name: 'inlineTemplate', value: inlineTemplate });
-          if (minimal !== undefined)
-            options.push({ name: 'minimal', value: minimal });
-          if (newProjectRoot !== undefined)
-            options.push({ name: 'newProjectRoot', value: newProjectRoot });
-          if (packageManager !== undefined)
-            options.push({ name: 'packageManager', value: packageManager });
-          if (prefix !== undefined)
-            options.push({ name: 'prefix', value: prefix });
-          if (routing !== undefined)
-            options.push({ name: 'routing', value: routing });
-          if (skipGit !== undefined)
-            options.push({ name: 'skip-git', value: skipGit });
-          if (skipInstall !== undefined)
-            options.push({ name: 'skip-install', value: skipInstall });
-          if (skipTests !== undefined)
-            options.push({ name: 'skip-tests', value: skipTests });
-          if (standalone !== undefined)
-            options.push({ name: 'standalone', value: standalone });
-          if (strict !== undefined)
-            options.push({ name: 'strict', value: strict });
-          if (style !== undefined)
-            options.push({ name: 'style', value: style });
-          if (ssr !== undefined) options.push({ name: 'ssr', value: ssr });
-          if (viewEncapsulation !== undefined)
-            options.push({
-              name: 'viewEncapsulation',
-              value: viewEncapsulation,
-            });
+          // //TODO: refactor this
+          // if (dryRun !== undefined)
+          //   options.push({ name: 'dry-run', value: dryRun });
+          // if (interactive !== undefined)
+          //   options.push({ name: 'interactive', value: interactive });
+          // if (framework !== undefined)
+          //   options.push({ name: 'framework', value: framework });
+          // if (defaults !== undefined)
+          //   options.push({ name: 'defaults', value: defaults });
+          // if (force !== undefined)
+          //   options.push({ name: 'force', value: force });
+          // if (collection !== undefined)
+          //   options.push({ name: 'collection', value: collection });
+          // if (commit !== undefined)
+          //   options.push({ name: 'commit', value: commit });
+          // if (createApplication !== undefined)
+          //   options.push({
+          //     name: 'createApplication',
+          //     value: createApplication,
+          //   });
+          // if (directory !== undefined)
+          //   options.push({ name: 'directory', value: directory });
+          // if (inlineStyle !== undefined)
+          //   options.push({ name: 'inlineStyle', value: inlineStyle });
+          // if (inlineTemplate !== undefined)
+          //   options.push({ name: 'inlineTemplate', value: inlineTemplate });
+          // if (minimal !== undefined)
+          //   options.push({ name: 'minimal', value: minimal });
+          // if (newProjectRoot !== undefined)
+          //   options.push({ name: 'newProjectRoot', value: newProjectRoot });
+          // if (packageManager !== undefined)
+          //   options.push({ name: 'packageManager', value: packageManager });
+          // if (prefix !== undefined)
+          //   options.push({ name: 'prefix', value: prefix });
+          // if (routing !== undefined)
+          //   options.push({ name: 'routing', value: routing });
+          // if (skipGit !== undefined)
+          //   options.push({ name: 'skip-git', value: skipGit });
+          // if (skipInstall !== undefined)
+          //   options.push({ name: 'skip-install', value: skipInstall });
+          // if (skipTests !== undefined)
+          //   options.push({ name: 'skip-tests', value: skipTests });
+          // if (standalone !== undefined)
+          //   options.push({ name: 'standalone', value: standalone });
+          // if (strict !== undefined)
+          //   options.push({ name: 'strict', value: strict });
+          // if (style !== undefined)
+          //   options.push({ name: 'style', value: style });
+          // if (ssr !== undefined) options.push({ name: 'ssr', value: ssr });
+          // if (viewEncapsulation !== undefined)
+          //   options.push({
+          //     name: 'viewEncapsulation',
+          //     value: viewEncapsulation,
+          //   });
 
           await this.action.handle(
             [
-              { name: 'schemaId', value: schemaId },
               {
-                name: 'workspaceName',
+                name: 'template-id',
+                value: templateId,
+              },
+              {
+                name: 'workspace-name',
                 value: workspaceName,
               },
             ],

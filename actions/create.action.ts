@@ -15,21 +15,27 @@ export class CreateAction extends AbstractAction {
 }
 
 const create = async (inputs: Input[], flags: Input[]) => {
-  const flagsExclude = ['framework', 'schemaId'];
-  const inputsExclude = ['schemaId'];
-  console.log('inputs', inputs);
-  const cli = CLIFactory(CLI.ANGULAR) as AngularCli;
-  const schemaId: Input | undefined = inputs.find(
-    (input) => input.name === 'schemaId',
+  console.log(inputs);
+  const flagsExcluded = ['template-id'];
+  const inputsExcluded = ['template-id'];
+
+  const schemaId: Input | undefined = findInput(inputs, 'template-id');
+
+  const { value: workspaceName }: Input | undefined = findInput(
+    inputs,
+    'workspace-name',
   );
+
   const inputsString = inputs
-    .filter((input) => !inputsExclude.some((i) => i === input.name))
+    .filter((input) => !inputsExcluded.some((i) => i === input.name))
     .map((input) => input.value as string);
   const flagsFiltered = flags.filter(
-    (flag) => !flagsExclude.some((f) => f === flag.name),
+    (flag) => !flagsExcluded.some((f) => f === flag.name),
   );
+
   try {
     //1. Create workspace, call angular cli.
+    const cli = CLIFactory(CLI.ANGULAR) as AngularCli;
     await cli.runCommand(cli.getNgNewCommand(inputsString, flagsFiltered));
   } catch (e) {
     throw new Error(
@@ -40,11 +46,9 @@ const create = async (inputs: Input[], flags: Input[]) => {
   }
 
   //2. Read JSON remote file.
-  const workspaceName = inputs.find((i) => i.name === 'workspaceName')!
-    .value! as string;
   const workspaceStructure = await fetchData(
     schemaId.value as string,
-    workspaceName,
+    workspaceName as string,
   );
   const buildFlags: Input[] = [
     { name: 'install-collection', value: true },
@@ -67,7 +71,7 @@ const create = async (inputs: Input[], flags: Input[]) => {
         buildFlags,
       ),
       false,
-      `./${dasherize(workspaceName)}`,
+      `./${dasherize(workspaceName as string)}`,
     );
   } catch (e) {
     throw new Error(
@@ -79,25 +83,34 @@ const create = async (inputs: Input[], flags: Input[]) => {
 };
 
 async function fetchData<T>(
-  schemaId: string,
+  templateId: string,
   workspaceName: string,
 ): Promise<string> {
   try {
     const { data } = await axios.get(
-      `https://angular-builder-backend-production.up.railway.app/schemas/json?id=${schemaId}`,
+      `https://angular-builder-backend-production.up.railway.app/templates/json?id=${templateId}`,
     );
     if (!data) {
       throw new SchematicsException(
-        colors.bold(colors.red(`The schema-id ${schemaId} is not valid.`)),
+        colors.bold(colors.red(`The schema-id ${templateId} is not valid.`)),
       );
     }
-    const regex = /(\[DEFAULT-PROJECT])/gm;
-    const jsonString = JSON.stringify(data);
 
-    return Buffer.from(jsonString.replace(regex, workspaceName)).toString(
-      'base64',
-    );
+    return replaceDefaultProject(data, workspaceName);
   } catch (error) {
     throw new SchematicsException(`Error fetching data: ${error.message}`);
   }
+}
+
+function replaceDefaultProject(data: string, workspaceName: string) {
+  const regex = /(\[DEFAULT-PROJECT])/gm;
+  const jsonString = JSON.stringify(data);
+
+  return Buffer.from(jsonString.replace(regex, workspaceName)).toString(
+    'base64',
+  );
+}
+
+function findInput(inputs: Input[], key: string) {
+  return inputs.find((input) => input.name === 'schemaId');
 }
