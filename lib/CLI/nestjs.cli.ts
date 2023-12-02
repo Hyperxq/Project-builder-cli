@@ -26,4 +26,8 @@ export class NestJSCli extends AbstractCli {
   public getGenerateCommand(inputs: string[] = [], flags: Input[] = []) {
     return this.buildCommandLine({ command: 'generate', inputs, flags });
   }
+
+  public getNewCommand(inputs: string[] = [], flags: Input[] = []): string {
+    return this.buildCommandLine({ command: 'new', inputs, flags });
+  }
 }

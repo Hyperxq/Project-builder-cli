@@ -1,12 +1,14 @@
 import { Input } from '../commands';
 import { AbstractAction } from './abstract.action';
-import { AngularCli, CLIFactory, SchematicsCli } from '../lib/CLI';
+import { AngularCli, CLIFactory, NestJSCli, SchematicsCli } from '../lib/CLI';
 import { CLI } from '../lib/CLI/cli.enum';
 import { colors } from '../lib/utils';
 import axios from 'axios';
 import { SchematicsException } from '@angular-devkit/schematics';
 import { Collection } from '../lib/schematics';
 import { dasherize } from '@angular-devkit/core/src/utils/strings';
+import { Template } from '../interfaces/template.interface';
+import { FrameworksEnum } from '../enums/frameworks.enum';
 
 export class CreateAction extends AbstractAction {
   public async handle(inputs: Input[], flags: Input[]) {
@@ -14,42 +16,31 @@ export class CreateAction extends AbstractAction {
   }
 }
 
-const create = async (inputs: Input[], flags: Input[]) => {
+const create = async (inputs: Input[] = [], flags: Input[] = []) => {
   console.log(inputs);
   const flagsExcluded = ['template-id'];
   const inputsExcluded = ['template-id'];
 
-  const schemaId: Input | undefined = findInput(inputs, 'template-id');
+  const schemaId = findInput(inputs, 'template-id');
 
-  const { value: workspaceName }: Input | undefined = findInput(
-    inputs,
-    'workspace-name',
-  );
+  const { value: workspaceName } = findInput(inputs, 'workspace-name');
 
-  const inputsString = inputs
-    .filter((input) => !inputsExcluded.some((i) => i === input.name))
-    .map((input) => input.value as string);
-  const flagsFiltered = flags.filter(
-    (flag) => !flagsExcluded.some((f) => f === flag.name),
-  );
-
-  try {
-    //1. Create workspace, call angular cli.
-    const cli = CLIFactory(CLI.ANGULAR) as AngularCli;
-    await cli.runCommand(cli.getNgNewCommand(inputsString, flagsFiltered));
-  } catch (e) {
-    throw new Error(
-      colors.bold(
-        colors.red(`something happen when we try to create a new workspace`),
-      ),
-    );
-  }
-
-  //2. Read JSON remote file.
-  const workspaceStructure = await fetchData(
+  //Read remote Template.
+  const { json: workspaceStructure, framework } = await fetchData(
     schemaId.value as string,
     workspaceName as string,
   );
+
+  const { name: frameworkName } = framework;
+
+  await createWorkspace(
+    frameworkName,
+    inputs,
+    flags,
+    inputsExcluded,
+    flagsExcluded,
+  );
+
   const buildFlags: Input[] = [
     { name: 'install-collection', value: true },
     { name: 'add-collections', value: true },
@@ -82,13 +73,13 @@ const create = async (inputs: Input[], flags: Input[]) => {
   }
 };
 
-async function fetchData<T>(
+async function fetchData(
   templateId: string,
   workspaceName: string,
-): Promise<string> {
+): Promise<Template> {
   try {
-    const { data } = await axios.get(
-      `https://angular-builder-backend-production.up.railway.app/templates/json?id=${templateId}`,
+    const { data } = await axios.get<Template>(
+      `https://angular-builder-backend-production.up.railway.app/templates?id=${templateId}`,
     );
     if (!data) {
       throw new SchematicsException(
@@ -96,9 +87,57 @@ async function fetchData<T>(
       );
     }
 
-    return replaceDefaultProject(data, workspaceName);
+    data.json = replaceDefaultProject(data.json, workspaceName);
+    return data;
   } catch (error) {
     throw new SchematicsException(`Error fetching data: ${error.message}`);
+  }
+}
+
+async function createWorkspace(
+  frameworkName: string,
+  inputs: Input[],
+  flags: Input[],
+  inputsExcluded: string[],
+  flagsExcluded: string[],
+) {
+  const inputsString = inputs
+    .filter((input) => !inputsExcluded.some((i) => i === input.name))
+    .map((input) => input.value as string);
+  const flagsFiltered = flags.filter(
+    (flag) => !flagsExcluded.some((f) => f === flag.name),
+  );
+  console.log(frameworkName);
+  try {
+    //1. Create workspace
+    switch (frameworkName) {
+      //call angular cli.
+      case FrameworksEnum.ANGULAR:
+        let angularCli: AngularCli = CLIFactory(CLI.ANGULAR) as AngularCli;
+        await angularCli.runCommand(
+          angularCli.getNgNewCommand(inputsString, flagsFiltered),
+        );
+        break;
+      case FrameworksEnum.NESTJS:
+        const nestjsCli: NestJSCli = CLIFactory(CLI.NESTJS) as NestJSCli;
+        await nestjsCli.runCommand(
+          nestjsCli.getNewCommand(inputsString, flagsFiltered),
+        );
+        break;
+      case FrameworksEnum.SCHEMATICS:
+        const schematicCli = CLIFactory(CLI.SCHEMATICS) as SchematicsCli;
+        await schematicCli.runCommand(
+          schematicCli.getNewCommand(inputsString, flagsFiltered),
+        );
+        break;
+      default:
+    }
+  } catch (e) {
+    throw new Error(
+      colors.bold(
+        colors.red(`something happen when we try to create a new workspace`),
+      ),
+    );
   }
 }
 
@@ -112,5 +151,5 @@ function replaceDefaultProject(data: string, workspaceName: string) {
 }
 
 function findInput(inputs: Input[], key: string) {
-  return inputs.find((input) => input.name === 'schemaId');
+  return inputs.find((input) => input.name === key);
 }

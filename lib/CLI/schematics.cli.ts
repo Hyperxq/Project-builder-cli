@@ -1,5 +1,5 @@
 import { AbstractCli } from './abstract.cli';
-import { SchematicCommandOptions } from './cli.interfaces';
+import { CommandOptions, SchematicCommandOptions } from './cli.interfaces';
 import { Input } from '../../commands';
 import { colors } from '../utils';
 import { EMOJIS } from '../ui';
@@ -35,6 +35,10 @@ export class SchematicsCli extends AbstractCli {
     )} ${this.buildFlags(flags)}`;
   }
 
+  buildBlankCommand({ command, inputs, flags }: CommandOptions): string {
+    return `${command} ${this.buildInputs(inputs)} ${this.buildFlags(flags)}`;
+  }
+
   public getExecuteCommand(
     collection: string,
     schematic: string,
@@ -42,5 +46,9 @@ export class SchematicsCli extends AbstractCli {
     flags: Input[] = [],
   ) {
     return this.buildCommandLine({ collection, schematic, inputs, flags });
+  }
+
+  public getNewCommand(inputs: string[] = [], flags: Input[] = []): string {
+    return this.buildBlankCommand({ command: 'blank', inputs, flags });
   }
 }
