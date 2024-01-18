@@ -1,14 +1,16 @@
 #!/usr/bin/env node
-import {Command} from 'commander';
+import { Command } from 'commander';
 import path from 'path';
-import {readFileSync} from 'fs';
+import { readFileSync } from 'fs';
 // import {fileURLToPath} from "url";
-import {CommandLoader} from '../commands';
+import { CommandLoader } from '../commands';
+import logo from './logo';
 
 // const __filename = fileURLToPath(import.meta.url);
 // const __dirname = path.dirname(__filename);
 
 const bootstrap = async () => {
+  console.log(logo);
   const program = new Command();
 
   program.configureHelp({

@@ -45,7 +45,12 @@ export class SchematicsCli extends AbstractCli {
     inputs: string[] = [],
     flags: Input[] = [],
   ) {
-    return this.buildCommandLine({ collection, schematic, inputs, flags });
+    return this.buildCommandLine({
+      collection,
+      schematic,
+      inputs,
+      flags,
+    });
   }
 
   public getNewCommand(inputs: string[] = [], flags: Input[] = []): string {
