@@ -13,6 +13,7 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "incremental": true,
+    "tsBuildInfoFile": "./dist/tsbuildinfo",
     "types": [
       "node"
     ]

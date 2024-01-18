@@ -1,125 +1,71 @@
-import copy from 'rollup-plugin-copy';
-import addShebang from 'rollup-plugin-add-shebang';
 import resolve from '@rollup/plugin-node-resolve';
-import builtins from 'rollup-plugin-node-builtins';
-import globals from 'rollup-plugin-node-globals';
+import terser from '@rollup/plugin-terser';
 import commonjs from '@rollup/plugin-commonjs';
+import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import typescript from '@rollup/plugin-typescript';
+import copy from 'rollup-plugin-copy';
+import builtins from 'rollup-plugin-node-builtins';
+import addShebang from 'rollup-plugin-add-shebang';
+import globals from 'rollup-plugin-node-globals';
+import cleaner from 'rollup-plugin-cleaner';
+
+import glob from 'glob';
+import path from 'node:path';
+import { dts } from 'rollup-plugin-dts';
+
+function getInputsFromGlob(pattern) {
+  return glob.sync(pattern).reduce((inputs, file) => {
+    const name = path.basename(file, path.extname(file));
+    inputs[name] = file;
+    return inputs;
+  }, {});
+}
+
+const tsFilesInActions = getInputsFromGlob('actions/*.ts');
+const tsFilesInCommands = getInputsFromGlob('commands/*.ts');
+const tsFilesInBin = getInputsFromGlob('bin/*.ts');
+const tsFilesInEnums = getInputsFromGlob('enums/*.ts');
+const tsFilesInInterfaces = getInputsFromGlob('interfaces/*.ts');
+const tsFilesInLib = getInputsFromGlob('lib/**/*.ts');
+
+const basePlugins = [
+  peerDepsExternal(),
+  typescript({ outputToFilesystem: false }),
+  commonjs(),
+  resolve(),
+  builtins(),
+  globals(),
+  terser(),
+];
+const baseExternal = [
+  'commander',
+  'ansi-colors',
+  'tty',
+  'node-emoji',
+  'fs',
+  'path',
+  'child_process',
+  'node:module',
+  '@angular/cli',
+  '@nestjs/cli',
+  '@angular-devkit/schematics-cli',
+];
 
 export default [
-  {
-    input: {
-      'abstract.action': 'actions/abstract.action.ts',
-      'create.action': 'actions/create.action.ts',
-      'generate.action': 'actions/generate.action.ts',
-      'execute.action': 'actions/execute.action.ts',
-      'actions.interfaces': 'actions/actions.interfaces.ts',
-      index: 'actions/index.ts',
-    },
-    output: {
-      dir: 'dist/actions',
-      format: 'cjs',
-    },
-    plugins: [
-      typescript({ outputToFilesystem: false }), // Convert TypeScript to JavaScript
-      commonjs(), // Convert CommonJS modules to ES6
-      resolve(), // Locate and use modules in node_modules
-      builtins(),
-      globals(),
-    ],
-    external: [
-      'commander',
-      'ansi-colors',
-      'tty',
-      'node-emoji',
-      'fs',
-      'path',
-      'child_process',
-      'node:module',
-      '@angular/cli',
-      '@nestjs/cli',
-      '@angular-devkit/schematics-cli',
-      'axios',
-    ],
-  },
-  {
-    input: {
-      'abstract.command': 'commands/abstract.command.ts',
-      'create.command': 'commands/create.command.ts',
-      'generate.command': 'commands/generate.command.ts',
-      'command.loader': 'commands/command.loader.ts',
-      'command.input': 'commands/command.input.ts',
-      index: 'commands/index.ts',
-    },
-    output: {
-      dir: 'dist/commands',
-      format: 'cjs',
-    },
-    plugins: [
-      typescript({ outputToFilesystem: false }), // Convert TypeScript to JavaScript
-      commonjs(), // Convert CommonJS modules to ES6
-      resolve(), // Locate and use modules in node_modules
-      builtins(),
-      globals(),
-    ],
-    external: [
-      'commander',
-      'ansi-colors',
-      'tty',
-      'node-emoji',
-      'fs',
-      'path',
-      'node-emoji',
-      'child_process',
-      'node:module',
-      '@angular/cli',
-      '@nestjs/cli',
-      '@angular-devkit/schematics-cli',
-    ],
-  },
-  {
-    input: 'bin/builder.ts',
-    output: {
-      dir: 'dist/bin',
-      format: 'cjs',
-    },
-    plugins: [
-      typescript(), // Convert TypeScript to JavaScript
-      commonjs(), // Convert CommonJS modules to ES6
-      resolve(), // Locate and use modules in node_modules
-      addShebang({
-        include: 'dist/bin/builder.js',
-      }),
-      builtins(),
-      globals(),
-    ],
-    external: [
-      'commander',
-      'fs',
-      'url',
-      'path',
-      'ansi-colors',
-      'tty',
-      'node-emoji',
-      'child_process',
-      'node:module',
-      '@angular/cli',
-      '@nestjs/cli',
-      '@angular-devkit/schematics-cli',
-    ],
-  },
   {
     input: 'src/index.ts', // Replace with the entry point of your CLI
     output: [
       {
-        dir: 'dist/lib',
+        dir: 'dist',
         format: 'cjs',
       },
     ],
     plugins: [
-      typescript(), // Convert TypeScript to JavaScript
-      commonjs(), // Convert CommonJS modules to ES6
-      resolve(), // Locate and use modules in node_modules
+      ...basePlugins,
+      cleaner({
+        targets: ['./dist/'],
+        silence: false,
+      }),
       copy({
         targets: [
           {
@@ -146,69 +92,118 @@ export default [
         ],
         hook: 'writeBundle',
       }),
-      builtins(),
-      globals(),
     ],
   },
   {
-    input: {
-      index: 'lib/utils/index.ts',
-      color: 'lib/utils/color.ts',
-      formatting: 'lib/utils/formatting.ts',
-    },
+    input: 'src/index.ts', // Adjust this if you have multiple or different entry points
+    output: [{ file: 'dist/index.d.ts', format: 'es' }],
+    plugins: [dts()],
+  },
+  {
+    input: tsFilesInActions,
     output: {
-      dir: 'dist/lib/utils',
+      dir: 'dist/actions',
       format: 'cjs',
     },
-
-    external: ['node-emoji', 'path'],
+    plugins: basePlugins,
+    external: [...baseExternal, 'axios'],
+  },
+  {
+    input: tsFilesInActions,
+    output: {
+      dir: 'dist/actions',
+      format: 'cjs',
+    },
+    plugins: [dts()],
+  },
+  {
+    input: tsFilesInCommands,
+    output: {
+      dir: 'dist/commands',
+      format: 'cjs',
+    },
+    plugins: basePlugins,
+    external: baseExternal,
+  },
+  {
+    input: tsFilesInCommands,
+    output: {
+      dir: 'dist/commands',
+      format: 'cjs',
+    },
+    plugins: [dts()],
+  },
+  {
+    input: tsFilesInBin,
+    output: {
+      dir: 'dist/bin',
+      format: 'cjs',
+    },
     plugins: [
-      typescript(), // Convert TypeScript to JavaScript
-      commonjs(), // Convert CommonJS modules to ES6
-      resolve(), // Locate and use modules in node_modules
+      ...basePlugins,
+      addShebang({
+        include: 'dist/bin/builder.js',
+      }),
     ],
+    external: baseExternal,
   },
   {
-    input: {
-      emojis: 'lib/ui/emojis.ts',
-      index: 'lib/ui/index.ts',
-      messages: 'lib/ui/messages.ts',
-      prefixes: 'lib/ui/prefixes.ts',
-    },
+    input: tsFilesInBin,
     output: {
-      dir: 'dist/lib/ui',
+      dir: 'dist/bin',
       format: 'cjs',
     },
-    plugins: [
-      typescript(), // Convert TypeScript to JavaScript
-      commonjs(), // Convert CommonJS modules to ES6
-      resolve(), // Locate and use modules in node_modules
-      builtins(),
-      globals(),
-    ],
-    external: ['node-emoji'],
+    plugins: [dts()],
   },
   {
-    input: {
-      index: 'lib/CLI/index.ts',
-      'abstract.cli': 'lib/CLI/abstract.cli.ts',
-      'angular.cli': 'lib/CLI/angular.cli.ts',
-      'nestjs.cli': 'lib/CLI/nestjs.cli.ts',
-      'schematics.cli': 'lib/CLI/schematics.cli.ts',
-      'cli.enum': 'lib/CLI/cli.enum.ts',
-      'cli.interfaces': 'lib/CLI/cli.interfaces.ts',
-      'cli.factory': 'lib/CLI/cli.factory.ts',
-    },
+    input: tsFilesInLib,
     output: {
-      dir: 'dist/lib/CLI',
+      dir: 'dist/lib',
       format: 'cjs',
     },
-    plugins: [typescript(), commonjs(), resolve(), builtins(), globals()],
-    external: [
-      'child_process',
-      '@angular/cli',
-      '@nestjs/cli',
-      '@angular-devkit/schematics-cli',
-    ],
+    plugins: basePlugins,
+    external: baseExternal,
+  },
+  {
+    input: tsFilesInLib,
+    output: {
+      dir: 'dist/lib',
+      format: 'cjs',
+    },
+    plugins: [dts()],
+  },
+  {
+    input: tsFilesInEnums,
+    output: {
+      dir: 'dist/enums',
+      format: 'cjs',
+    },
+    plugins: basePlugins,
+    external: baseExternal,
+  },
+  {
+    input: tsFilesInEnums,
+    output: {
+      dir: 'dist/enums',
+      format: 'cjs',
+    },
+    plugins: [dts()],
+  },
+  {
+    input: tsFilesInInterfaces,
+    output: {
+      dir: 'dist/interfaces',
+      format: 'cjs',
+    },
+    plugins: basePlugins,
+    external: baseExternal,
+  },
+  {
+    input: tsFilesInInterfaces,
+    output: {
+      dir: 'dist/interfaces',
+      format: 'cjs',
+    },
+    plugins: [dts()],
   },
 ];
