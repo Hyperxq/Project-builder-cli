@@ -1,6 +1,6 @@
 {
   "name": "@danils/project-builder-cli",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Project Builder - modern, fast, powerful node.js web framework to build projects(@cli)",
   "private": false,
   "engines": {
