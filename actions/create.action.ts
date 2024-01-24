@@ -7,7 +7,7 @@ import axios from "axios";
 import { SchematicsException } from "@angular-devkit/schematics";
 import { Collection } from "../lib/schematics";
 import { dasherize } from "@angular-devkit/core/src/utils/strings";
-import { Template } from "../interfaces/template.interface";
+import { CliOptions, Template } from "../interfaces/template.interface";
 import { MESSAGES } from "../lib/ui";
 
 export class CreateAction extends AbstractAction {
@@ -17,30 +17,34 @@ export class CreateAction extends AbstractAction {
 }
 
 const create = async (inputs: Input[] = [], flags: Input[] = []) => {
-  const flagsExcluded = ["template-id"];
+  const flagsExcluded = ["template-id", "name"];
   const inputsExcluded = ["template-id"];
 
   const schemaId = findInput(inputs, "template-id");
 
-  const { value: workspaceName } = findInput(inputs, "workspace-name");
 
   // const dryRun = findInput(inputs, 'dry-run');
   //Read remote Template.
   const {
     json: workspaceStructure,
-    framework,
+    cliOptions,
     createBy,
     name
-  } = await fetchData(schemaId.value as string, workspaceName as string);
+  } = await fetchData(schemaId.value as string);
 
   console.log(MESSAGES.WELCOME(name, createBy));
 
-  const { name: frameworkName } = framework;
+  const { cli: frameworkName, options } = cliOptions as CliOptions;
+
+  const workspaceInputs = Object.entries(options).map((value) => ({
+    name: value[0],
+    value: value[1]
+  }));
 
   await createWorkspace(
     frameworkName,
     inputs,
-    flags,
+    [...flags, ...workspaceInputs],
     inputsExcluded,
     flagsExcluded
   );
@@ -50,7 +54,7 @@ const create = async (inputs: Input[] = [], flags: Input[] = []) => {
     { name: "add-collections", value: true },
     {
       name: "name",
-      value: workspaceName
+      value: options.name
     },
     { name: "base64-string", value: workspaceStructure }
   ];
@@ -66,7 +70,7 @@ const create = async (inputs: Input[] = [], flags: Input[] = []) => {
         buildFlags
       ),
       false,
-      `./${dasherize(workspaceName as string)}`
+      `./${dasherize(options.name as string)}`
     );
   } catch (e) {
     throw new Error(
@@ -78,16 +82,16 @@ const create = async (inputs: Input[] = [], flags: Input[] = []) => {
 };
 
 async function fetchData(
-  templateId: string,
-  workspaceName: string
+  templateId: string
 ): Promise<Template> {
   let spinner = new Spinner();
   try {
+
     spinner.start(
       colors.blue(`Validating template-id: ${colors.bold(templateId)}`)
     );
     const { data } = await axios.get<Template>(
-      `https://project-builder-backend-production.up.railway.app/templates?id=${templateId}`
+      `https://project-builder-backend-production.up.railway.app/user-templates?id=${templateId}`
     );
     if (!data) {
       spinner.stop();
@@ -97,6 +101,9 @@ async function fetchData(
         )} or something happened wrong`
       );
     }
+    const { cliOptions } = data;
+    const { options } = cliOptions as CliOptions;
+    const workspaceName = options.name;
 
     data.json = replaceDefaultProject(data.json, workspaceName);
     spinner.succeed(
@@ -126,7 +133,7 @@ async function createWorkspace(
   );
   let spinner = new Spinner();
   try {
-    const { value } = findInput(inputs, "workspace-name");
+    const { value } = findInput(flags, "name");
     spinner.start(MESSAGES.CREATING_WORKSPACE(value as string));
 
     const CliMap = (inputsString: string[], flagsFiltered: Input[]) => {
@@ -134,13 +141,13 @@ async function createWorkspace(
         Angular: () => {
           const angularCli: AngularCli = CLIFactory(CLI.ANGULAR) as AngularCli;
           return angularCli.runCommand(
-            angularCli.getNgNewCommand(inputsString, flagsFiltered)
+            angularCli.getNgNewCommand([value as string, ...inputsString], flagsFiltered)
           );
         },
         NestJS: () => {
           const nestjsCli: NestJSCli = CLIFactory(CLI.NESTJS) as NestJSCli;
           return nestjsCli.runCommand(
-            nestjsCli.getNewCommand(inputsString, flagsFiltered)
+            nestjsCli.getNewCommand([value as string, ...inputsString], flagsFiltered)
           );
         },
         Schematics: () => {
@@ -160,7 +167,7 @@ async function createWorkspace(
     spinner.stop();
     throw new Error(
       colors.bold(
-        colors.red(`something happen when we try to create a new workspace`)
+        colors.red(`something happen when we try to create a new workspace, ${e?.message ?? e}`)
       )
     );
   }

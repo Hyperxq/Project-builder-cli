@@ -1,22 +1,22 @@
-import { VerificationState } from '../enums/verification-state.enum';
+import { VerificationState } from "../enums/verification-state.enum";
 
 export interface Template {
   id: string;
   name: string;
   createBy: string;
-  votesCount: number;
-  issuesCount: number;
-  verificationState: VerificationState;
+  usedCount: number;
+  username: string;
   json: string;
-  description: string;
-  framework?: Framework;
+  userTemplateVerificationState: VerificationState;
+  cliOptions: CliOptions;
 }
 
-class FrameworkState {}
+export enum CLI {
+  Angular = "Angular",
+  Nestjs = "Nestjs",
+}
 
-export interface Framework {
-  id: string;
-  name: string;
-  icon: string;
-  state: FrameworkState;
+export interface CliOptions {
+  cli: CLI,
+  options: { [p: string]: any };
 }
