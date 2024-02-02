@@ -26,9 +26,9 @@ export class GenerateCommand extends AbstractCommand {
           const { dryRun, flat } = command;
           const collection = command?.collection;
 
-          const options: Input[] = [];
+          const flags: Input[] = [];
 
-          options.push({ name: "dry-run", value: !!dryRun });
+          flags.push({ name: "dry-run", value: !!dryRun });
 
           const inputs: Input[] = [];
           inputs.push({ name: "schematic", value: schematic });
@@ -37,7 +37,7 @@ export class GenerateCommand extends AbstractCommand {
             value: collection
           });
 
-          await this.action.handle(inputs, options);
+          await this.action.handle(inputs, flags);
         }
       );
   }
