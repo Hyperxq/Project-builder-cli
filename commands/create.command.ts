@@ -1,14 +1,12 @@
 import { AbstractCommand } from "./abstract.command";
 import { Command } from "commander";
-import { Input } from "./command.input";
+import { Input } from "./command.input.interface";
 
 export class CreateCommand extends AbstractCommand {
   public async load(program: Command): Promise<void> {
-    //[workspace-name]
     program
       .command("create [template-id]")
       .alias("c")
-      // TODO: we need to get the right description depends on the framework flag
       .option(
         "--dry-run",
         "Report actions that would be taken without writing out results.",
@@ -16,9 +14,9 @@ export class CreateCommand extends AbstractCommand {
       )
       .option("--skip-install", "Skip package installation.", false)
       .description(
-        "Create a workspace and execute many schematic depends on the schema-id"
+        "Create a workspace and execute many schematic depends on the template-id"
       )
-      .addHelpCommand("create angular --help", "show assistance")
+      .addHelpCommand("create --help", "show assistance")
       .action(
         async (
           templateId: string,
@@ -33,11 +31,9 @@ export class CreateCommand extends AbstractCommand {
               name: "template-id",
               value: templateId
             }
-            // {
-            //   name: 'workspace-name',
-            //   value: workspaceName,
-            // },
           ];
+
+          //TODO: implement the logic behind these flags.
 
           options.push({ name: "dry-run", value: dryRun });
           options.push({ name: "skip-install", value: skipInstall });

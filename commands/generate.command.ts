@@ -1,53 +1,44 @@
-import { AbstractCommand } from './abstract.command';
-import { Command } from 'commander';
-import { Input } from './command.input';
+import { AbstractCommand } from "./abstract.command";
+import { Command } from "commander";
+import { Input } from "./command.input.interface";
 
 export class GenerateCommand extends AbstractCommand {
   public async load(program: Command): Promise<void> {
     program
-      .command('generate <schematic> [name] [path]')
-      .alias('g')
-      // TODO: we need to get the right description depends on the command
-      // .description(await this.buildDescription())
+      .command("generate <schematic>")
+      .alias("g")
+      .description("Execute any schematics no matter the workspace")
       .option(
-        '--flat',
-        'Enforce flat structure of generated element.',
-        () => true,
+        "-d, --dry-run",
+        "Report actions that would be taken without writing out results.",
+        false
       )
       .option(
-        '-d, --dry-run',
-        'Report actions that would be taken without writing out results.',
+        "-c, --collection [collectionName]",
+        "Schematics collection to use."
       )
-      .option(
-        '-c, --collection [collectionName]',
-        'Schematics collection to use.',
-      )
-      .option('--skip-import', 'Skip importing', () => true, false)
+      .allowUnknownOption()
       .action(
         async (
           schematic: string,
-          name: string,
-          path: string,
-          command: { [key: string]: any },
+          command: { [key: string]: any }
         ) => {
-          const { dryRun, flat, collection, skipImport } = command;
+          const { dryRun, flat } = command;
+          const collection = command?.collection;
+
           const options: Input[] = [];
 
-          if (flat !== undefined) options.push({ name: 'flat', value: flat });
-          options.push({ name: 'dry-run', value: !!dryRun });
-          options.push({ name: 'skip-import', value: !!skipImport });
-          options.push({
-            name: 'collection',
-            value: collection,
-          });
+          options.push({ name: "dry-run", value: !!dryRun });
 
           const inputs: Input[] = [];
-          inputs.push({ name: 'schematic', value: schematic });
-          inputs.push({ name: 'name', value: name });
-          inputs.push({ name: 'path', value: path });
+          inputs.push({ name: "schematic", value: schematic });
+          inputs.push({
+            name: "collection",
+            value: collection
+          });
 
           await this.action.handle(inputs, options);
-        },
+        }
       );
   }
 }

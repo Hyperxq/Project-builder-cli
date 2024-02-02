@@ -1,8 +1,8 @@
 import { Input } from "../commands";
 import { AbstractAction } from "./abstract.action";
-import { AngularCli, CLIFactory, NestJSCli, SchematicsCli } from "../lib/CLI";
+import { CLIFactory, SchematicsCli } from "../lib/CLI";
 import { CLI } from "../lib/CLI/cli.enum";
-import { colors, Spinner } from "../lib/utils";
+import { colors, createWorkspace, findInput, Spinner } from "../lib/utils";
 import axios from "axios";
 import { SchematicsException } from "@angular-devkit/schematics";
 import { Collection } from "../lib/schematics";
@@ -118,60 +118,6 @@ async function fetchData(
   }
 }
 
-async function createWorkspace(
-  frameworkName: string,
-  inputs: Input[],
-  flags: Input[],
-  inputsExcluded: string[],
-  flagsExcluded: string[]
-) {
-  const inputsString = inputs
-    .filter((input) => !inputsExcluded.some((i) => i === input.name))
-    .map((input) => input.value as string);
-  const flagsFiltered = flags.filter(
-    (flag) => !flagsExcluded.some((f) => f === flag.name)
-  );
-  let spinner = new Spinner();
-  try {
-    const { value } = findInput(flags, "name");
-    spinner.start(MESSAGES.CREATING_WORKSPACE(value as string));
-
-    const CliMap = (inputsString: string[], flagsFiltered: Input[]) => {
-      return {
-        Angular: () => {
-          const angularCli: AngularCli = CLIFactory(CLI.ANGULAR) as AngularCli;
-          return angularCli.runCommand(
-            angularCli.getNgNewCommand([value as string, ...inputsString], flagsFiltered)
-          );
-        },
-        NestJS: () => {
-          const nestjsCli: NestJSCli = CLIFactory(CLI.NESTJS) as NestJSCli;
-          return nestjsCli.runCommand(
-            nestjsCli.getNewCommand([value as string, ...inputsString], flagsFiltered)
-          );
-        },
-        Schematics: () => {
-          const schematicCli = CLIFactory(CLI.SCHEMATICS) as SchematicsCli;
-          return schematicCli.runCommand(
-            schematicCli.getNewCommand(inputsString, flagsFiltered)
-          );
-        }
-      };
-    };
-    spinner.stop();
-    const cli = CliMap(inputsString, flagsFiltered);
-    await cli[frameworkName]();
-    spinner.start(MESSAGES.CREATING_WORKSPACE(value as string));
-    spinner.succeed(MESSAGES.WORKSPACE_CREATED);
-  } catch (e) {
-    spinner.stop();
-    throw new Error(
-      colors.bold(
-        colors.red(`something happen when we try to create a new workspace, ${e?.message ?? e}`)
-      )
-    );
-  }
-}
 
 function replaceDefaultProject(data: string, workspaceName: string) {
   const regex = /(\[DEFAULT-PROJECT])/gm;
@@ -180,8 +126,4 @@ function replaceDefaultProject(data: string, workspaceName: string) {
   return Buffer.from(jsonString.replace(regex, workspaceName)).toString(
     "base64"
   );
-}
-
-function findInput(inputs: Input[], key: string) {
-  return inputs.find((input) => input.name === key);
 }

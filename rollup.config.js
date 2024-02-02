@@ -34,8 +34,8 @@ const tsFilesInUtils = getInputsFromGlob("lib/utils/*.ts");
 
 
 const basePlugins = [
-  peerDepsExternal(),
   typescript({ outputToFilesystem: false }),
+  peerDepsExternal(),
   commonjs(),
   builtins(),
   globals(),
