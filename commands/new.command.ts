@@ -1,19 +1,25 @@
-import { AbstractCommand } from "./abstract.command";
-import { Command } from "commander";
+/**
+ * @license
+ * Copyright Google LLC All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+
+import { Command } from 'commander';
+import { AbstractCommand } from './abstract.command';
 
 export class NewCommand extends AbstractCommand {
   public async load(program: Command): Promise<void> {
     program
-      .command("execute <schematic>")
-      .alias("exc")
+      .command('execute <schematic>')
+      .alias('exc')
       .option(
-        "-d, --dry-run",
-        "Report actions that would be taken without writing out results."
+        '-d, --dry-run',
+        'Report actions that would be taken without writing out results.',
       )
       .action(async () => {
-        console.log("execute works!!!");
+        console.log('execute works!!!');
       });
   }
-
-
 }

@@ -1,8 +1,6 @@
 {
   "compilerOptions": {
-    "typeRoots": [
-      "node_modules/@types"
-    ],
+    "typeRoots": ["node_modules/@types"],
     "target": "ES2021",
     "module": "CommonJS",
     "moduleResolution": "node",
@@ -14,17 +12,8 @@
     "forceConsistentCasingInFileNames": true,
     "incremental": true,
     "tsBuildInfoFile": "./dist/tsbuildinfo",
-    "types": [
-      "node"
-    ]
+    "types": ["node"],
   },
-  "include": [
-    "actions",
-    "bin",
-    "commands",
-    "lib"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["actions", "bin", "commands", "enums", "lib", "src"],
+  "exclude": ["node_modules"],
 }

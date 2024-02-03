@@ -1,8 +1,16 @@
-import { AbstractCli } from "./abstract.cli";
-import { Input } from "../../commands";
-import { execSync } from "child_process";
-import { colors } from "../utils";
-import { EMOJIS } from "../ui";
+/**
+ * @license
+ * Copyright Google LLC All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+
+import { execSync } from 'child_process';
+import { Input } from '../../commands';
+import { EMOJIS } from '../ui';
+import { colors } from '../utils';
+import { AbstractCli } from './abstract.cli';
 
 export class AngularCli extends AbstractCli {
   constructor() {
@@ -12,27 +20,28 @@ export class AngularCli extends AbstractCli {
   static findClosestBinary(): string {
     try {
       // NOTE: As a requirement, every user needs to install the ng cli
-      const globalNodeModulesPath = execSync("npm root -g").toString().trim();
-      return require.resolve(globalNodeModulesPath + "/@angular/cli/bin/ng.js");
+      const globalNodeModulesPath = execSync('npm root -g').toString().trim();
+
+      return require.resolve(globalNodeModulesPath + '/@angular/cli/bin/ng.js');
     } catch (e) {
       console.log(e);
       throw new Error(
         `${colors.blue(
-          EMOJIS["BROKEN_HEART"] +
-          "Angular cli doesn't install, please execute:"
-        )} ${colors.green("npm i -g @angular/cli")}`
+          EMOJIS['BROKEN_HEART'] +
+            "Angular cli doesn't install, please execute:",
+        )} ${colors.green('npm i -g @angular/cli')}`,
       );
     }
   }
 
   public getGenerateCommand(
     inputs: string[] = [],
-    flags: Input[] = []
+    flags: Input[] = [],
   ): string {
-    return this.buildCommandLine({ command: "generate", inputs, flags });
+    return this.buildCommandLine({ command: 'generate', inputs, flags });
   }
 
   public getNgNewCommand(inputs: string[] = [], flags: Input[] = []): string {
-    return this.buildCommandLine({ command: "new", inputs, flags });
+    return this.buildCommandLine({ command: 'new', inputs, flags });
   }
 }

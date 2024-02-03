@@ -1,8 +1,16 @@
+/**
+ * @license
+ * Copyright Google LLC All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+
+import { Input } from '../../commands';
+import { EMOJIS } from '../ui';
+import { colors } from '../utils';
 import { AbstractCli } from './abstract.cli';
 import { CommandOptions, SchematicCommandOptions } from './cli.interfaces';
-import { Input } from '../../commands';
-import { colors } from '../utils';
-import { EMOJIS } from '../ui';
 
 export class SchematicsCli extends AbstractCli {
   constructor() {
@@ -30,9 +38,7 @@ export class SchematicsCli extends AbstractCli {
     inputs,
     flags,
   }: SchematicCommandOptions): string {
-    return `${collection}:${schematic} ${this.buildInputs(
-      inputs,
-    )} ${this.buildFlags(flags)}`;
+    return `${collection}:${schematic} ${this.buildInputs(inputs)} ${this.buildFlags(flags)}`;
   }
 
   buildBlankCommand({ command, inputs, flags }: CommandOptions): string {

@@ -1,4 +1,12 @@
-import { VerificationState } from "../enums/verification-state.enum";
+/**
+ * @license
+ * Copyright Google LLC All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+
+import { VerificationState } from '../enums/verification-state.enum';
 
 export interface Template {
   id: string;
@@ -12,11 +20,11 @@ export interface Template {
 }
 
 export enum CLI {
-  Angular = "Angular",
-  Nestjs = "Nestjs",
+  Angular = 'Angular',
+  Nestjs = 'Nestjs',
 }
 
 export interface CliOptions {
-  cli: CLI,
+  cli: CLI;
   options: { [p: string]: any };
 }
