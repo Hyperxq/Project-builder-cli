@@ -1,8 +1,16 @@
-import { CommandOptions } from './cli.interfaces';
+/**
+ * @license
+ * Copyright Google LLC All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+
+import { ChildProcess, SpawnOptions, spawn } from 'child_process';
 import { Input } from '../../commands';
-import { ChildProcess, spawn, SpawnOptions } from 'child_process';
-import { colors } from '../utils';
 import { MESSAGES } from '../ui';
+import { colors } from '../utils';
+import { CommandOptions } from './cli.interfaces';
 
 export abstract class AbstractCli {
   protected constructor(protected binary: string) {}
@@ -18,6 +26,7 @@ export abstract class AbstractCli {
       stdio: collect ? 'pipe' : 'inherit',
       shell: true,
     };
+
     return new Promise<null | string>((resolve, reject) => {
       const child: ChildProcess = spawn(
         `node`,
@@ -36,7 +45,7 @@ export abstract class AbstractCli {
           if (code === 0) {
             resolve(null);
           } else {
-            //TODO: Remove unused messages
+            // TODO: Remove unused messages
             console.error(
               colors.red(
                 MESSAGES.RUNNER_EXECUTION_ERROR(`${this.binary} ${command}`),

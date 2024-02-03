@@ -23,14 +23,18 @@ npm i -g @danils/project-builder-cli
 ```
 
 ## Usage
+
 To get started, you can invoke the help command to explore the CLI's capabilities:
+
 ```sh
 builder --help
 ```
 
 ## Contributing
+
 We welcome contributions from the community! If you're interested in enhancing the Project Builder CLI, please review our [CONTRIBUTING.md](./CONTRIBUTING.md) guide for details on the contribution process, coding standards, and how to submit pull requests.
 
 ## How does it work?
+
 Check the miro link to check:
 [Flow diagram](https://miro.com/welcomeonboard/ZkZicUdSYlp2TlhuRG1FRDhkY1FJZnF2VGJ2dTlPSkFsY1Z1WU1NWWVYUk05MmVUUTFPQWZVTjNMWTJ0bTBObHwzNDU4NzY0NTY2NTc1MDcwODI0fDI=?share_link_id=741166420035)
