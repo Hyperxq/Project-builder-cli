@@ -1,3 +1,11 @@
+/**
+ * @license
+ * Copyright Google LLC All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+
 import { normalizeToKebabOrSnakeCase } from '../utils/formatting';
 
 export class SchematicOption {
@@ -21,6 +29,7 @@ export class SchematicOption {
       }
     } else if (typeof this.value === 'boolean') {
       const str = this.normalizedName;
+
       return this.value ? `--${str}` : `--no-${str}`;
     } else {
       return `--${this.normalizedName}=${this.value}`;
@@ -34,6 +43,7 @@ export class SchematicOption {
         if (char === '(' || char === ')' || char === '[' || char === ']') {
           return `${content}\\${char}`;
         }
+
         return `${content}${char}`;
       }, '');
   }

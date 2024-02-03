@@ -48,16 +48,17 @@ npm install
 ```
 
 ## Coding Rules
+
 To ensure consistency and quality, please adhere to the coding standards outlined in our documentation. This includes writing tests for all new features and bug fixes.
 
-
 ## Naming branching
+
 [type]/task-name_name-abbreviation
 [feature|bug|hotfix|docs]
 
 For example,
 feature/implement-husky_DR
 
-
 ## Commit Lint
+
 [Convention](https://www.conventionalcommits.org/en/v1.0.0/)
