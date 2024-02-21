@@ -6,10 +6,9 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import { ChildProcess, SpawnOptions, spawn } from 'child_process';
+import { SpawnOptions } from 'child_process';
 import { Input } from '../../commands';
-import { MESSAGES } from '../ui';
-import { colors } from '../utils';
+import { spawnAsync } from '../utils';
 import { CommandOptions } from './cli.interfaces';
 
 export abstract class AbstractCli {
@@ -27,41 +26,7 @@ export abstract class AbstractCli {
       shell: true,
     };
 
-    return new Promise<null | string>((resolve, reject) => {
-      const child: ChildProcess = spawn(
-        `node`,
-        [this.binary, ...args],
-        options,
-      );
-
-      if (collect) {
-        child.stdout!.on('data', (data) =>
-          resolve(data.toString().replace(/\r\n|\n/, '')),
-        );
-      }
-
-      try {
-        child.on('close', (code) => {
-          if (code === 0) {
-            resolve(null);
-          } else {
-            // TODO: Remove unused messages
-            console.error(
-              colors.red(
-                MESSAGES.RUNNER_EXECUTION_ERROR(`${this.binary} ${command}`),
-              ),
-            );
-            reject();
-          }
-        });
-        child.on('error', (error) => {
-          console.error('Spawn error:', error);
-        });
-      } catch (e) {
-        console.error(e);
-        throw e;
-      }
-    });
+    await spawnAsync(`node`, [this.binary, ...args], options, collect);
   }
 
   protected buildCommandLine({

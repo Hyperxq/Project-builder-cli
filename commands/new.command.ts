@@ -12,7 +12,7 @@ import { AbstractCommand } from './abstract.command';
 export class NewCommand extends AbstractCommand {
   public async load(program: Command): Promise<void> {
     program
-      .command('execute <schematic>')
+      .command('new <library-name>')
       .alias('exc')
       .option(
         '-d, --dry-run',
