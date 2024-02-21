@@ -7,7 +7,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import { Command } from 'commander';
+import { Command, program } from 'commander';
 import { readFileSync } from 'fs';
 import path from 'path';
 import { CommandLoader } from '../commands';
@@ -15,7 +15,6 @@ import logo from './logo';
 
 const bootstrap = async () => {
   console.log(logo);
-  const program = new Command();
 
   program.configureHelp({
     sortSubcommands: true,

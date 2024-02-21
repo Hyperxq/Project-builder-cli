@@ -10,3 +10,6 @@ export * from './color';
 export * from './formatting';
 export * from './spinner';
 export * from './workspaces';
+export * from './dependencies';
+export * from './logger';
+export * from './commands';

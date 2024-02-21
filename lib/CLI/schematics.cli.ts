@@ -8,7 +8,7 @@
 
 import { Input } from '../../commands';
 import { EMOJIS } from '../ui';
-import { colors } from '../utils';
+import { colors, logger } from '../utils';
 import { AbstractCli } from './abstract.cli';
 import { CommandOptions, SchematicCommandOptions } from './cli.interfaces';
 
@@ -22,13 +22,13 @@ export class SchematicsCli extends AbstractCli {
       return require.resolve(
         '@angular-devkit/schematics-cli/bin/schematics.js',
       );
-    } catch (e) {
-      console.log(e);
-      throw new Error(
+    } catch (error) {
+      logger.error(error.message, [
         `${colors.red(
           `${EMOJIS['BROKEN_HEART']} Schematics CLI doesn't installed, please execute:`,
         )} ${colors.green('npm i -g @angular-devkit/schematics-cli')}`,
-      );
+      ]);
+      process.exit(1);
     }
   }
 
@@ -51,12 +51,20 @@ export class SchematicsCli extends AbstractCli {
     inputs: string[] = [],
     flags: Input[] = [],
   ) {
-    return this.buildCommandLine({
-      collection,
-      schematic,
-      inputs,
-      flags,
-    });
+    try {
+      return this.buildCommandLine({
+        collection,
+        schematic,
+        inputs,
+        flags,
+      });
+    } catch (error) {
+      logger.error(
+        'Error when Project Builder was trying to execute the schematic',
+        error.message,
+      );
+      process.exit(1);
+    }
   }
 
   public getNewCommand(inputs: string[] = [], flags: Input[] = []): string {

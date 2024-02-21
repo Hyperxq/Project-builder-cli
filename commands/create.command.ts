@@ -11,7 +11,7 @@ import { AbstractCommand } from './abstract.command';
 import { Input } from './command.input.interface';
 
 export class CreateCommand extends AbstractCommand {
-  public async load(program: Command): Promise<void> {
+  public load(program: Command) {
     program
       .command('create [template-id]')
       .alias('c')
