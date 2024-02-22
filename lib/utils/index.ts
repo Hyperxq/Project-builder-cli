@@ -13,3 +13,4 @@ export * from './workspaces';
 export * from './dependencies';
 export * from './logger';
 export * from './commands';
+export * from './collections';

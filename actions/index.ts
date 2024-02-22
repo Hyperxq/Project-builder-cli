@@ -9,4 +9,4 @@
 export * from './abstract.action';
 export * from './execute.action';
 export * from './create.action';
-export * from './newAction';
+export * from './new.action';

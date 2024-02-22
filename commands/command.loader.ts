@@ -7,15 +7,16 @@
  */
 
 import { Command } from 'commander';
-import { CreateAction, ExecuteAction } from '../actions';
+import { CreateAction, ExecuteAction, NewAction } from '../actions';
 import { ERROR_PREFIX } from '../lib/ui';
 import { colors } from '../lib/utils';
 import { CreateCommand } from './create.command';
 import { ExecuteCommand } from './execute.command';
+import { NewCommand } from './new.command';
 
 export class CommandLoader {
   public static async load(program: Command): Promise<void> {
-    // await new NewCommand(new ExecuteAction()).load(program);
+    new NewCommand(new NewAction()).load(program);
     new CreateCommand(new CreateAction()).load(program);
     new ExecuteCommand(new ExecuteAction()).load(program);
 

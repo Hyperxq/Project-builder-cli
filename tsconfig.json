@@ -4,6 +4,7 @@
     "target": "ES2021",
     "module": "CommonJS",
     "moduleResolution": "node",
+    "resolveJsonModule": true,
     "removeComments": true,
     "sourceMap": false,
     "strict": false,
