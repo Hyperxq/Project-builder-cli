@@ -9,11 +9,17 @@
 import { access, readFile } from 'node:fs/promises';
 import path from 'node:path';
 
-export async function isDependencyInstalled(dependencyName) {
+export async function isDependencyInstalled(
+  dependencyName: string,
+  startDir: string,
+) {
   try {
     // Read the package.json file
-    const packageJsonPath = await findPackageJson(__dirname);
-    const packageJsonString = await readFile(packageJsonPath, 'utf8');
+    const packageJsonPath = await findPackageJson(startDir);
+    if (typeof packageJsonPath === 'boolean') {
+      return false;
+    }
+    const packageJsonString = await readFile(packageJsonPath as string, 'utf8');
     const packageJson = JSON.parse(packageJsonString);
 
     // Check if the dependency exists in any of the relevant objects
@@ -34,7 +40,9 @@ export async function isDependencyInstalled(dependencyName) {
   }
 }
 
-async function findPackageJson(startDir: string) {
+export async function findPackageJson(
+  startDir: string,
+): Promise<string | boolean> {
   let currentDir = startDir;
   let continueLoop: boolean = true;
 
@@ -52,7 +60,8 @@ async function findPackageJson(startDir: string) {
 
       // Check if we've reached the filesystem root
       if (currentDir === parentDir) {
-        throw new Error('package.json not found in any parent directory.');
+        return false;
+        // throw new Error('package.json not found in any parent directory.');
       }
 
       currentDir = parentDir;

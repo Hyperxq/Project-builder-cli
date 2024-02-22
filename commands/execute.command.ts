@@ -22,6 +22,11 @@ export class ExecuteCommand extends AbstractCommand {
         'Report actions that would be taken without writing out results.',
         false,
       )
+      .option(
+        '-pm, --package-manager',
+        'Specify which package manager tool to use: npm, cnpm, yarn, pnpm", bun',
+        'npm',
+      )
       .allowUnknownOption(true)
       .parse(process.argv)
       .action(

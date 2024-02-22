@@ -6,15 +6,19 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
+import { access } from 'node:fs/promises';
 import { Input } from '../commands';
 import { CLIFactory, SchematicsCli } from '../lib/CLI';
 import { CLI } from '../lib/CLI/cli.enum';
 import { Collection } from '../lib/schematics';
 import {
+  checkCollection,
   findInput,
+  findPackageJson,
   isDependencyInstalled,
   logger,
   spawnAsync,
+  uninstallCollection,
 } from '../lib/utils';
 import { AbstractAction } from './abstract.action';
 
@@ -26,8 +30,6 @@ export class ExecuteAction extends AbstractAction {
 
 const executeSchematic = async (inputs: Input[] = [], flags: Input[] = []) => {
   try {
-    // TODO: add winston
-
     const collectionInput = findInput(inputs, 'collection')?.value as string;
     const schematic = findInput(inputs, 'schematic')?.value as string;
 
@@ -52,45 +54,3 @@ const executeSchematic = async (inputs: Input[] = [], flags: Input[] = []) => {
     process.exit(1);
   }
 };
-
-async function checkCollection(collection: string): Promise<boolean> {
-  try {
-    const isInstalled = await isDependencyInstalled(collection);
-
-    if (!isInstalled) {
-      logger.info('Temporal installation package: ' + collection, [
-        'command executed: ' + 'npm install ' + collection,
-      ]);
-
-      await spawnAsync('npm', ['install', collection], {
-        cwd: process.cwd(),
-        stdio: 'inherit',
-        shell: true,
-      });
-
-      // spawnSync('npm', ['install', collection], { stdio: 'ignore' });
-      return isInstalled;
-    }
-  } catch (error) {
-    logger.error(error.message);
-    process.exit(1);
-  }
-}
-
-async function uninstallCollection(collection: string) {
-  try {
-    logger.info('Uninstalling of temporal package: ' + collection, [
-      'command executed: ' + 'npm uninstall ' + collection,
-    ]);
-    // spawnSync('npm', ['uninstall', collection], { stdio: 'ignore' });
-    await spawnAsync('npm', ['uninstall', collection], {
-      cwd: process.cwd(),
-      stdio: 'inherit',
-      shell: true,
-    });
-    // spawnSync('npm', ['uninstall', collection], { stdio: 'inherit' });
-  } catch (error) {
-    logger.error(error.message);
-    process.exit(1);
-  }
-}
