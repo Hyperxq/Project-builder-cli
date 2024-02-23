@@ -4,7 +4,8 @@
         "@danils/schematicskit": {
             "remove-folder-content": {},
             "empty-folder": {},
-            "prettier": {}
+            "prettier": {},
+            "schematics-library-bundler": {}
         }
     },
 
@@ -33,6 +34,11 @@
                         "settings": {"name": "src/builder-generate"}
                     }
                 ]
+            },
+            "schematics-library-bundler": {
+                "settings": {
+                    "bundler": "rollup"
+                }
             }
         }
     }
