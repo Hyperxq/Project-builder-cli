@@ -28,7 +28,7 @@ const bootstrap = async () => {
   setVersionFlag(program);
   await CommandLoader.load(program);
 
-  await program.parseAsync(process.argv);
+  program.parse(process.argv);
 };
 
 function setVersionFlag(program: Command) {

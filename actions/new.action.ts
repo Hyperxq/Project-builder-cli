@@ -18,7 +18,6 @@ import {
   colors,
   findInput,
   logger,
-  spawnAsync,
   uninstallCollection,
 } from '../lib/utils';
 import { AbstractAction } from './abstract.action';
@@ -81,4 +80,6 @@ const generateFiles = async (inputs: Input[] = [], flags: Input[] = []) => {
     Collection.PROJECTBUILDER,
     join(process.cwd(), dasherize(name.value as string)),
   );
+
+  logger.info('Project Name:' + name);
 };

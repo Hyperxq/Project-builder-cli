@@ -28,7 +28,6 @@ export class ExecuteCommand extends AbstractCommand {
         'npm',
       )
       .allowUnknownOption(true)
-      .parse(process.argv)
       .action(
         async (
           collection: string,
