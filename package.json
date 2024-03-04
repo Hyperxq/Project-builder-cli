@@ -1,10 +1,10 @@
 {
   "name": "@danils/project-builder-cli",
-  "version": "0.1.34",
-  "description": "Project Builder - modern, fast, powerful node.js web framework to build projects(@cli)",
+  "version": "1.0.5",
+  "description": "Project Builder - modern, fast, powerful node.js web framework to create complex projects and execute schematics",
   "private": false,
   "engines": {
-    "node": ">= 16"
+    "node": ">= 20"
   },
   "publishConfig": {
     "access": "public"
@@ -40,7 +40,7 @@
   },
   "keywords": [
     "Schematics",
-    "Angular 16+",
+    "Angular 17+",
     "Nestjs"
   ],
   "author": "Hyperxq",
@@ -53,10 +53,13 @@
     "@schematics/angular": "^17.0.1",
     "ansi-colors": "^4.1.3",
     "axios": "^1.6.0",
+    "case-anything": "^2.1.13",
     "commander": "^11.1.0",
     "inquirer": "8.2.6",
     "node-emoji": "^2.1.0",
     "ora": "5.4.1",
+    "winston": "^3.11.0",
+    "winston-console-format": "^1.0.8",
     "yargs": "^17.7.2"
   },
   "devDependencies": {
@@ -78,7 +81,7 @@
     "eslint-plugin-promise": "^6.1.1",
     "glob": "^10.3.10",
     "husky": "^8.0.3",
-    "lint-staged": "^15.2.1",
+    "lint-staged": "^15.2.2",
     "prettier": "3.2.4",
     "rimraf": "^5.0.5",
     "rollup": "3.29.4",

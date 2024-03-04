@@ -11,14 +11,14 @@ import { Command } from 'commander';
 import { AbstractCommand } from './abstract.command';
 import { Input } from './command.input.interface';
 
-export class NewCommand extends AbstractCommand {
+export class AddCommand extends AbstractCommand {
   public load(program: Command) {
     program
-      .command('new <library-name> [author]')
+      .command('add <collection-name>')
       .option(
-        '-b, --bundler',
-        'With bundler do you want to use to compile the project: rollup, ts',
-        'rollup',
+        '--save-dev',
+        'Add the collection package to the Dev dependencies',
+        false,
       )
       .option(
         '-d, --dry-run',

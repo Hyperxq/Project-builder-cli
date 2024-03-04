@@ -11,4 +11,5 @@ export enum Collection {
   ANGULAR = '@schematics/angular',
   CUSTOM = '',
   ANGULARBUILDER = '@danils/angular-builder',
+  PROJECTBUILDER = '@danils/project-builder',
 }
