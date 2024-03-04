@@ -7,17 +7,21 @@
  */
 
 import { Command } from 'commander';
-import { CreateAction, GenerateAction } from '../actions';
+import { CreateAction, ExecuteAction, NewAction } from '../actions';
+import { AddAction } from '../actions/add.action';
 import { ERROR_PREFIX } from '../lib/ui';
 import { colors } from '../lib/utils';
+import { AddCommand } from './add.command';
 import { CreateCommand } from './create.command';
-import { GenerateCommand } from './generate.command';
+import { ExecuteCommand } from './execute.command';
+import { NewCommand } from './new.command';
 
 export class CommandLoader {
   public static async load(program: Command): Promise<void> {
-    // await new NewCommand(new ExecuteAction()).load(program);
-    await new GenerateCommand(new GenerateAction()).load(program);
-    await new CreateCommand(new CreateAction()).load(program);
+    new NewCommand(new NewAction()).load(program);
+    new CreateCommand(new CreateAction()).load(program);
+    new ExecuteCommand(new ExecuteAction()).load(program);
+    new AddCommand(new AddAction()).load(program);
 
     this.handleInvalidCommand(program);
   }

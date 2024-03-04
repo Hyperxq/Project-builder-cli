@@ -21,6 +21,10 @@ function getInputsFromGlob(pattern) {
   }, {});
 }
 
+const removeSrcPattern = /^(src[\/\\])(.*?)/gs;
+const normalizeUrl = (url) => url.replace(/\\/g, '/');
+const removeSrcPath = (string) => normalizeUrl(string).replace(removeSrcPattern, '$2');
+
 const tsFilesInActions = getInputsFromGlob('actions/*.ts');
 const tsFilesInCommands = getInputsFromGlob('commands/*.ts');
 const tsFilesInBin = getInputsFromGlob('bin/*.ts');
@@ -92,6 +96,13 @@ export default [
           {
             src: 'README.md',
             dest: 'dist',
+          },
+          {
+            src: 'lib/**/*.json',
+            dest: 'dist/',
+            rename: (name, extension, fullPath) => {
+                return removeSrcPath(fullPath);
+            },
           },
         ],
         hook: 'writeBundle',

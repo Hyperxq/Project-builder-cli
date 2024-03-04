@@ -72,7 +72,7 @@ const create = async (inputs: Input[] = [], flags: Input[] = []) => {
     await schematicsCLI.runCommand(
       schematicsCLI.getExecuteCommand(
         Collection.ANGULARBUILDER,
-        'build',
+        'init',
         [],
         buildFlags,
       ),
