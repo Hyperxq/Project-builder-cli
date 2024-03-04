@@ -6,9 +6,9 @@ The Project Builder CLI is a versatile command-line interface tool designed to s
 
 ## Key Features
 
-1. **Execute Angular Schematics Anywhere**: Run `builder g [schematics-name] --collection [collection-name]` from any directory, eliminating the need for a specific Angular workspace context. This feature enhances flexibility and efficiency in utilizing Angular schematics across diverse projects.
+1. **Execute Angular Schematics Anywhere**: Run `builder exec [collection-name] [schematics-name]` from any directory, eliminating the need for a specific Angular workspace context. This feature enhances flexibility and efficiency in utilizing Angular schematics across diverse projects.
 
-2. **Scaffolding for Schematics Libraries**: Easily create ready-to-publish Angular schematics project libraries with the command `builder new [project-name]`. The CLI sets up all necessary configurations, allowing you to focus on developing your schematics.
+2. **Scaffolding for Schematics Libraries**: Easily create ready-to-publish Angular schematics project libraries with the command `builder new [project-name] [author]`. The CLI sets up all necessary configurations, allowing you to focus on developing your schematics.
 
 3. **Automated Complex Project Setup**: Leverage the CLI's ability to orchestrate complex project setups with a single command. It integrates seamlessly with existing CLI tools like Angular CLI, NestJS CLI, or NX CLI to create the workspace, followed by executing defined schematics through Project Builder, streamlining the project initialization process.
 
