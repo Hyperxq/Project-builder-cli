@@ -24,7 +24,12 @@ import { AbstractAction } from './abstract.action';
 
 export class NewAction extends AbstractAction {
   public async handle(inputs: Input[], flags: Input[]) {
-    await generateFiles(inputs, flags);
+    try {
+      await generateFiles(inputs, flags);
+    } catch (error) {
+      logger.error(error.message);
+      process.exit(1);
+    }
   }
 }
 
@@ -55,7 +60,7 @@ const generateFiles = async (inputs: Input[] = [], flags: Input[] = []) => {
 
   await checkCollection(
     Collection.PROJECTBUILDER,
-    join(process.cwd(), dasherize(name.value as string)),
+    join(process.cwd(), name.value as string),
   );
 
   const buffer = Buffer.from(JSON.stringify(projectBuilder)).toString('base64');
@@ -73,13 +78,13 @@ const generateFiles = async (inputs: Input[] = [], flags: Input[] = []) => {
       ],
     ),
     false,
-    `./${dasherize(name.value as string)}`,
+    `./${name.value as string}`,
   );
 
   await uninstallCollection(
     Collection.PROJECTBUILDER,
-    join(process.cwd(), dasherize(name.value as string)),
+    join(process.cwd(), name.value as string),
   );
 
-  logger.info('Project Name:' + name);
+  logger.info('Project Name:' + name.value);
 };
