@@ -5,7 +5,8 @@
             "remove-folder-content": {},
             "empty-folder": {},
             "prettier": {},
-            "schematics-library-bundler": {}
+            "schematics-library-bundler": {},
+            "add-utils": {}
         }
     },
 
@@ -39,7 +40,8 @@
                 "settings": {
                     "bundler": "rollup"
                 }
-            }
+            },
+            "add-utils": {}
         }
     }
 }
