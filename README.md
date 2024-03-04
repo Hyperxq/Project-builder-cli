@@ -21,7 +21,7 @@ The Project Builder CLI is a versatile command-line interface tool designed to s
 Install the Project Builder CLI globally using npm to make it accessible from anywhere in your system:
 
 ```sh
-npm i -g @danils/project-builder-cli
+npm i -g @pbuilder/cli
 ```
 
 ## Usage
