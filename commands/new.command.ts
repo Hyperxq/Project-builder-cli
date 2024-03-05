@@ -8,6 +8,7 @@
 
 import { kebabCase } from 'case-anything';
 import { Command } from 'commander';
+import { logger } from '../lib/utils';
 import { AbstractCommand } from './abstract.command';
 import { Input } from './command.input.interface';
 
@@ -16,9 +17,24 @@ export class NewCommand extends AbstractCommand {
     program
       .command('new <library-name> [author]')
       .option(
-        '-b, --bundler',
+        '-b, --bundler <bundler-name>',
         'With bundler do you want to use to compile the project: rollup, ts',
         'rollup',
+      )
+      .option(
+        '--package-manager <manager>',
+        'The package manager used to install dependencies.     [string] [choices: "npm", "yarn", "pnpm", "cnpm", "bun"]',
+        (value: string) => {
+          if (
+            !['npm', 'yarn', 'pnpm', 'cnpm', 'bun'].some((v) => value === v)
+          ) {
+            logger.error(`You entered a not valid package manager`);
+            process.exit(1);
+          }
+
+          return value;
+        },
+        'npm',
       )
       .option(
         '-d, --dry-run',

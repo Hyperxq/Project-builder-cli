@@ -6,7 +6,6 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import { dasherize } from '@angular-devkit/core/src/utils/strings';
 import { join } from 'path';
 import { Input } from '../commands';
 import { CLIFactory, SchematicsCli } from '../lib/CLI';
@@ -36,6 +35,12 @@ export class NewAction extends AbstractAction {
 const generateFiles = async (inputs: Input[] = [], flags: Input[] = []) => {
   // TODO: the name can have a path
   const name = findInput(inputs, 'library-name');
+  const packageManager = findInput(flags, 'package-manager')?.value as
+    | 'npm'
+    | 'yarn'
+    | 'pnpm'
+    | 'cnpm'
+    | 'bun';
   /*
    * 1. Create the base project.
    * 2. Implement formatter and linters (pending to create the eslint schematic)
@@ -61,6 +66,7 @@ const generateFiles = async (inputs: Input[] = [], flags: Input[] = []) => {
   await checkCollection(
     Collection.PROJECTBUILDER,
     join(process.cwd(), name.value as string),
+    packageManager,
   );
 
   const buffer = Buffer.from(JSON.stringify(projectBuilder)).toString('base64');
@@ -75,6 +81,10 @@ const generateFiles = async (inputs: Input[] = [], flags: Input[] = []) => {
           name: 'base64-string',
           value: buffer,
         },
+        {
+          name: 'package-manager',
+          value: packageManager,
+        },
       ],
     ),
     false,
@@ -84,7 +94,8 @@ const generateFiles = async (inputs: Input[] = [], flags: Input[] = []) => {
   await uninstallCollection(
     Collection.PROJECTBUILDER,
     join(process.cwd(), name.value as string),
+    packageManager,
   );
 
-  logger.info('Project Name:' + name.value);
+  logger.info('Project Name: ' + name.value);
 };
