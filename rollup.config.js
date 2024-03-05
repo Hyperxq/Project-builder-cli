@@ -57,6 +57,7 @@ const baseExternal = [
   '@angular/cli',
   '@nestjs/cli',
   '@angular-devkit/schematics-cli',
+  'npm-package-arg'
 ];
 
 export default [

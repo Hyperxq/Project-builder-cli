@@ -8,6 +8,7 @@
 
 import { kebabCase } from 'case-anything';
 import { Command } from 'commander';
+import { logger } from '../lib/utils';
 import { AbstractCommand } from './abstract.command';
 import { Input } from './command.input.interface';
 
@@ -18,39 +19,51 @@ export class AddCommand extends AbstractCommand {
       .option(
         '--save-dev',
         'Add the collection package to the Dev dependencies',
-        false,
+        true,
       )
       .option(
         '-d, --dry-run',
         'Report actions that would be taken without writing out results.',
       )
+      .option('--registry <registry>', 'The NPM registry to use.')
+      .option(
+        '--package-manager <manager>',
+        'The package manager used to install dependencies.     [string] [choices: "npm", "yarn", "pnpm", "cnpm", "bun"]',
+        (value: string) => {
+          if (
+            !['npm', 'yarn', 'pnpm', 'cnpm', 'bun'].some((v) => value === v)
+          ) {
+            logger.error(`You entered a not valid package manager`);
+            process.exit(1);
+          }
+
+          return value;
+        },
+        'npm',
+      )
       .action(
-        async (
-          libraryName: string,
-          author: string,
-          options: { [key: string]: any },
-        ) => {
-          const inputs: Input[] = [];
-          const flags: Input[] = [];
+        async (collectionName: string, options: { [key: string]: any }) => {
+          try {
+            const inputs: Input[] = [];
+            const flags: Input[] = [];
 
-          Object.entries(options).forEach(([name, value]) => {
-            flags.push({
-              name: kebabCase(name),
-              value,
+            Object.entries(options).forEach(([name, value]) => {
+              flags.push({
+                name: kebabCase(name),
+                value,
+              });
             });
-          });
 
-          inputs.push({
-            name: 'library-name',
-            value: libraryName,
-          });
+            inputs.push({
+              name: 'collection-name',
+              value: collectionName,
+            });
 
-          inputs.push({
-            name: 'author',
-            value: author,
-          });
-
-          await this.action.handle(inputs, flags);
+            await this.action.handle(inputs, flags);
+          } catch (error) {
+            logger.error(error.message);
+            process.exit(1);
+          }
         },
       );
   }
