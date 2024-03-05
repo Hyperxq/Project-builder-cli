@@ -8,6 +8,7 @@
 
 import { access, readFile } from 'node:fs/promises';
 import path from 'node:path';
+import { logger } from './logger';
 
 export async function isDependencyInstalled(
   dependencyName: string,
@@ -60,6 +61,8 @@ export async function findPackageJson(
 
       // Check if we've reached the filesystem root
       if (currentDir === parentDir) {
+        logger.error('package.json not found in any parent directory.');
+
         return false;
         // throw new Error('package.json not found in any parent directory.');
       }

@@ -7,6 +7,10 @@
  */
 
 import { join } from 'path';
+import {
+  packageManagerCommands,
+  packageManagerUninstallCommands,
+} from '../../enums/package-manager.enum';
 import { spawnAsync } from './commands';
 import { findPackageJson, isDependencyInstalled } from './dependencies';
 import { logger } from './logger';
@@ -14,9 +18,10 @@ import { logger } from './logger';
 export async function checkCollection(
   collection: string,
   path: string = '',
+  packageManager: string = 'npm',
 ): Promise<boolean> {
   try {
-    const doesPackageJSONExist = await findPackageJson(path ?? __dirname);
+    const doesPackageJSONExist = await findPackageJson(path ?? process.cwd());
     const isInstalled = await isDependencyInstalled(
       collection,
       path ?? __dirname,
@@ -24,12 +29,16 @@ export async function checkCollection(
 
     if (!isInstalled) {
       logger.info('Temporal installation package: ' + collection, [
-        `command executed: npm install ${!doesPackageJSONExist ? '-g' : ''} ${collection}`,
+        `command executed: ${packageManager} ${packageManagerCommands[packageManager]} ${!doesPackageJSONExist ? '-g' : ''} ${collection}`,
       ]);
 
       await spawnAsync(
-        'npm',
-        ['install', !doesPackageJSONExist ? '-g' : '', collection],
+        packageManager,
+        [
+          packageManagerCommands[packageManager],
+          !doesPackageJSONExist ? '-g' : '',
+          collection,
+        ],
         {
           cwd: path ?? process.cwd(),
           stdio: 'inherit',
@@ -46,18 +55,28 @@ export async function checkCollection(
   }
 }
 
-export async function uninstallCollection(collection: string, path?: string) {
+export async function uninstallCollection(
+  collection: string,
+  path?: string,
+  packageManager: string = 'npm',
+) {
   try {
     logger.info('Uninstalling of temporal package: ' + collection, [
-      'command executed: ' + 'npm uninstall ' + collection,
+      'command executed: ' +
+        packageManager +
+        ` ${packageManagerUninstallCommands[packageManager]} ` +
+        collection,
     ]);
-    // spawnSync('npm', ['uninstall', collection], { stdio: 'ignore' });
-    await spawnAsync('npm', ['uninstall', collection], {
-      cwd: path ?? process.cwd(),
-      stdio: 'inherit',
-      shell: true,
-    });
-    // spawnSync('npm', ['uninstall', collection], { stdio: 'inherit' });
+
+    await spawnAsync(
+      packageManager,
+      [packageManagerUninstallCommands[packageManager], collection],
+      {
+        cwd: path ?? process.cwd(),
+        stdio: 'inherit',
+        shell: true,
+      },
+    );
   } catch (error) {
     logger.error(error.message);
     process.exit(1);

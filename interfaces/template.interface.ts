@@ -22,6 +22,7 @@ export interface Template {
 export enum CLI {
   Angular = 'Angular',
   Nestjs = 'Nestjs',
+  SCHEMATICS = 'SCHEMATICS',
 }
 
 export interface CliOptions {
