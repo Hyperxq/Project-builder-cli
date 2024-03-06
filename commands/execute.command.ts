@@ -40,6 +40,7 @@ export class ExecuteCommand extends AbstractCommand {
         'npm',
       )
       .option('--send-pm', 'Send the package manager to the schematic', false)
+      .option('--send-registry', 'Send the registry to the schematic', false)
       .allowUnknownOption(true)
       .action(
         async (

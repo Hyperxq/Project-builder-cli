@@ -29,6 +29,7 @@ const executeSchematic = async (inputs: Input[] = [], flags: Input[] = []) => {
     const collectionInput = findInput(inputs, 'collection')?.value as string;
     const schematic = findInput(inputs, 'schematic')?.value as string;
     const sendPM = findInput(flags, 'send-pm')?.value as boolean;
+    const sendRegistry = findInput(flags, 'send-registry')?.value as boolean;
     const dryRun = findInput(flags, 'dry-run')?.value as boolean;
     const registry = findInput(flags, 'registry')?.value as string;
     const packageManager = findInput(flags, 'package-manager')?.value as
@@ -51,15 +52,31 @@ const executeSchematic = async (inputs: Input[] = [], flags: Input[] = []) => {
       registry,
     );
 
-    const flagsFilted = sendPM
-      ? flags.filter(({ name }) => name !== 'send-pm')
-      : flags.filter(
+    let flagsFilted = [];
+
+    if (sendPM) {
+      flagsFilted = flags.filter(({ name }) => name !== 'send-pm');
+    } else {
+      flagsFilted = [
+        ...flags.filter(
           ({ name }) => name !== 'send-pm' && name !== 'package-manager',
-        );
+        ),
+      ];
+    }
+
+    if (sendRegistry && registry) {
+      flagsFilted = [
+        ...flagsFilted.filter(({ name }) => name !== 'send-registry'),
+      ];
+    } else {
+      flagsFilted = [
+        ...flagsFilted.filter(
+          ({ name }) => name !== 'send-registry' && name !== 'registry',
+        ),
+      ];
+    }
+
     const schematicCli = CLIFactory(CLI.SCHEMATICS) as SchematicsCli;
-    logger.debug('flagsFilted', [
-      schematicCli.getExecuteCommand(collection, schematic, [], flagsFilted),
-    ]);
 
     await schematicCli.runCommand(
       schematicCli.getExecuteCommand(collection, schematic, [], flagsFilted),
