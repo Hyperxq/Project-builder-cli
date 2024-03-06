@@ -8,6 +8,7 @@
 
 import { kebabCase } from 'case-anything';
 import { Command } from 'commander';
+import { logger } from '../lib/utils';
 import { AbstractCommand } from './abstract.command';
 import { Input } from './command.input.interface';
 
@@ -22,11 +23,23 @@ export class ExecuteCommand extends AbstractCommand {
         'Report actions that would be taken without writing out results.',
         false,
       )
+      .option('--registry <registry>', 'The NPM registry to use.')
       .option(
-        '-pm, --package-manager',
-        'Specify which package manager tool to use: npm, cnpm, yarn, pnpm", bun',
+        '--package-manager <manager>',
+        'The package manager used to install dependencies.     [string] [choices: "npm", "yarn", "pnpm", "cnpm", "bun"]',
+        (value: string) => {
+          if (
+            !['npm', 'yarn', 'pnpm', 'cnpm', 'bun'].some((v) => value === v)
+          ) {
+            logger.error(`You entered a not valid package manager`);
+            process.exit(1);
+          }
+
+          return value;
+        },
         'npm',
       )
+      .option('--send-pm', 'Send the package manager to the schematic', false)
       .allowUnknownOption(true)
       .action(
         async (
