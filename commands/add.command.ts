@@ -42,6 +42,22 @@ export class AddCommand extends AbstractCommand {
         },
         'npm',
       )
+      .option('--registry <registry>', 'The NPM registry to use.')
+      .option(
+        '--package-manager <manager>',
+        'The package manager used to install dependencies.     [string] [choices: "npm", "yarn", "pnpm", "cnpm", "bun"]',
+        (value: string) => {
+          if (
+            !['npm', 'yarn', 'pnpm', 'cnpm', 'bun'].some((v) => value === v)
+          ) {
+            logger.error(`You entered a not valid package manager`);
+            process.exit(1);
+          }
+
+          return value;
+        },
+        'npm',
+      )
       .action(
         async (collectionName: string, options: { [key: string]: any }) => {
           try {
