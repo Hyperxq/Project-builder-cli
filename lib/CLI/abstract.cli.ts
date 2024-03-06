@@ -42,11 +42,19 @@ export abstract class AbstractCli {
   }
 
   protected buildFlags(flags: Input[] = []): string {
-    return flags
-      .map(
-        ({ name, value }) =>
-          `--${name}${value !== undefined ? ' ' + value : ''}`,
-      )
-      .join(' ');
+    return (
+      flags
+        // .filter((ff) => !(typeof ff.value === 'boolean' && !ff.value))
+        // .map((ff) => {
+        //   ff.value = typeof ff.value !== 'boolean' ? ff.value : undefined;
+
+        //   return ff;
+        // })
+        .map(
+          ({ name, value }) =>
+            `--${name}${value !== undefined ? '=' + value : ''}`,
+        )
+        .join(' ')
+    );
   }
 }

@@ -24,6 +24,7 @@ export class AddCommand extends AbstractCommand {
       .option(
         '-d, --dry-run',
         'Report actions that would be taken without writing out results.',
+        false,
       )
       .option('--registry <registry>', 'The NPM registry to use.')
       .option(

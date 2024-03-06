@@ -30,11 +30,11 @@ import { AbstractAction } from './abstract.action';
 
 export class AddAction extends AbstractAction {
   public async handle(inputs: Input[], flags: Input[]) {
-    await executeSchematic(inputs, flags);
+    await addSchematic(inputs, flags);
   }
 }
 
-const executeSchematic = async (inputs: Input[] = [], flags: Input[] = []) => {
+const addSchematic = async (inputs: Input[] = [], flags: Input[] = []) => {
   try {
     /*
      * 1. Check the library
@@ -47,6 +47,7 @@ const executeSchematic = async (inputs: Input[] = [], flags: Input[] = []) => {
       ?.value as string;
     const registry = findInput(flags, 'registry')?.value as string;
     const saveDev = findInput(flags, 'save-dev')?.value as boolean;
+    const dryRun = findInput(flags, 'dry-run')?.value as boolean;
     const packageManager = findInput(flags, 'package-manager')?.value as
       | 'npm'
       | 'yarn'
@@ -57,45 +58,68 @@ const executeSchematic = async (inputs: Input[] = [], flags: Input[] = []) => {
     await isPackageValid(collectionName, registry);
     if (!(await isItInstalled(collectionName))) {
       // Install library on dev by default
-      await spawnAsync(
-        packageManager,
-        [
-          packageManagerCommands[packageManager],
-          collectionName,
-          saveDev ? '--save-dev' : '',
-        ],
-        {
-          cwd: process.cwd(),
-          stdio: 'inherit',
-          shell: true,
-        },
-      );
+      if (!dryRun) {
+        await spawnAsync(
+          packageManager,
+          [
+            packageManagerCommands[packageManager],
+            collectionName,
+            saveDev ? '--save-dev' : '',
+            registry ? `--registry=${registry}` : '',
+          ],
+          {
+            cwd: process.cwd(),
+            stdio: 'inherit',
+            shell: true,
+          },
+        );
+        logger.info(`Collection ${collectionName} installed!`);
+      }
+    } else {
+      logger.warn(`The collection is already installed`);
+      process.exit(1);
     }
     const { name } = npa(collectionName);
-    const collection: SchematicsCollectionSchema =
-      findAndReadCollectionJson(name);
+    const collection: SchematicsCollectionSchema = !dryRun
+      ? findAndReadCollectionJson(name)
+      : { schematics: {} };
 
     if (
       collection.schematics &&
       (collection.schematics['builder-add'] || collection.schematics['ng-add'])
     ) {
-      let addSchematicName = '';
-      if (collection.schematics['ng-add'] !== undefined) {
-        addSchematicName = 'ng-add';
-      }
-      if (
-        collection.schematics['ng-add'] === undefined &&
-        collection.schematics['builder-add']
-      ) {
-        addSchematicName = 'builder-add';
-      }
+      try {
+        let addSchematicName = '';
+        if (collection.schematics['ng-add'] !== undefined) {
+          addSchematicName = 'ng-add';
+        }
+        if (
+          collection.schematics['ng-add'] === undefined &&
+          collection.schematics['builder-add']
+        ) {
+          addSchematicName = 'builder-add';
+        }
+        const schematicCli = CLIFactory() as SchematicsCli;
 
-      const schematicCli = CLIFactory() as SchematicsCli;
+        await schematicCli.runCommand(
+          schematicCli.getExecuteCommand(
+            name,
+            addSchematicName,
+            [],
+            dryRun ? [{ name: 'save-mode', value: dryRun }] : [],
+          ),
+        );
 
-      await schematicCli.runCommand(
-        schematicCli.getExecuteCommand(name, addSchematicName),
-      );
+        logger.info(
+          `The schematic ${addSchematicName} was executed successfully`,
+        );
+      } catch (error) {
+        logger.error(
+          `Something happen when executing the schematic ng-add or builder-add: ${error.message}`,
+        );
+      }
     }
+    logger.info(`The collection ${collectionName} was added successfully`);
   } catch (error) {
     logger.error(error.message, [error.code]);
     process.exit(1);
@@ -123,14 +147,17 @@ async function isPackageValid(
     }
     const { name, rawSpec } = npa(collection);
     spinner.start('Determining package manager...');
-    const response = await json(`/${name}/${rawSpec}`, {
-      registry,
-    });
+    const response = await json(
+      `/${name}${rawSpec && rawSpec !== '*' ? `/${rawSpec}` : ''}`,
+      {
+        registry,
+      },
+    );
     const latestVersion: string = response['dist-tags']
       ? response['dist-tags']['latest']
       : '';
     spinner.succeed(
-      `Found compatible package:  ${colors.grey(`${name}@${rawSpec ?? latestVersion}`)}.`,
+      `Found compatible package:  ${colors.grey(`${name}@${rawSpec && rawSpec !== '*' ? `/${rawSpec}` : '' ?? latestVersion}`)}.`,
     );
 
     return;
@@ -144,7 +171,11 @@ async function isPackageValid(
 }
 
 async function isItInstalled(collection: string) {
-  const doesPackageJSONExist = await findPackageJson(process.cwd());
+  const packageJSON = await findPackageJson(process.cwd());
+
+  if (!packageJSON) {
+    process.exit(1);
+  }
 
   return await isDependencyInstalled(collection, process.cwd());
 }

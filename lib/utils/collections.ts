@@ -19,6 +19,8 @@ export async function checkCollection(
   collection: string,
   path: string = '',
   packageManager: string = 'npm',
+  dryRun: boolean = false,
+  registry?: string,
 ): Promise<boolean> {
   try {
     const doesPackageJSONExist = await findPackageJson(path ?? process.cwd());
@@ -32,21 +34,23 @@ export async function checkCollection(
         `command executed: ${packageManager} ${packageManagerCommands[packageManager]} ${!doesPackageJSONExist ? '-g' : ''} ${collection}`,
       ]);
 
-      await spawnAsync(
-        packageManager,
-        [
-          packageManagerCommands[packageManager],
-          !doesPackageJSONExist ? '-g' : '',
-          collection,
-        ],
-        {
-          cwd: path ?? process.cwd(),
-          stdio: 'inherit',
-          shell: true,
-        },
-      );
+      if (!dryRun) {
+        await spawnAsync(
+          packageManager,
+          [
+            packageManagerCommands[packageManager],
+            !doesPackageJSONExist ? '-g' : '',
+            collection,
+            registry ? `--registry=${registry}` : '',
+          ],
+          {
+            cwd: path ?? process.cwd(),
+            stdio: 'inherit',
+            shell: true,
+          },
+        );
+      }
 
-      // spawnSync('npm', ['install', collection], { stdio: 'ignore' });
       return isInstalled;
     }
   } catch (error) {
@@ -59,6 +63,7 @@ export async function uninstallCollection(
   collection: string,
   path?: string,
   packageManager: string = 'npm',
+  dryRun: boolean = false,
 ) {
   try {
     logger.info('Uninstalling of temporal package: ' + collection, [
@@ -68,15 +73,17 @@ export async function uninstallCollection(
         collection,
     ]);
 
-    await spawnAsync(
-      packageManager,
-      [packageManagerUninstallCommands[packageManager], collection],
-      {
-        cwd: path ?? process.cwd(),
-        stdio: 'inherit',
-        shell: true,
-      },
-    );
+    if (!dryRun) {
+      await spawnAsync(
+        packageManager,
+        [packageManagerUninstallCommands[packageManager], collection],
+        {
+          cwd: path ?? process.cwd(),
+          stdio: 'inherit',
+          shell: true,
+        },
+      );
+    }
   } catch (error) {
     logger.error(error.message);
     process.exit(1);

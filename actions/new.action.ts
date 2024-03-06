@@ -41,6 +41,7 @@ const generateFiles = async (inputs: Input[] = [], flags: Input[] = []) => {
     | 'pnpm'
     | 'cnpm'
     | 'bun';
+  const dryRun = findInput(flags, 'dry-run')?.value as boolean;
   /*
    * 1. Create the base project.
    * 2. Implement formatter and linters (pending to create the eslint schematic)
@@ -71,21 +72,34 @@ const generateFiles = async (inputs: Input[] = [], flags: Input[] = []) => {
 
   const buffer = Buffer.from(JSON.stringify(projectBuilder)).toString('base64');
 
+  const PMFlags: Input[] = [
+    {
+      name: 'base64-string',
+      value: buffer,
+    },
+    {
+      name: 'package-manager',
+      value: packageManager,
+    },
+  ];
+
+  if (dryRun) {
+    PMFlags.push({
+      name: 'save-mode',
+      value: dryRun,
+    });
+    PMFlags.push({
+      name: 'dry-run',
+      value: dryRun,
+    });
+  }
+
   await schematicCli.runCommand(
     schematicCli.getExecuteCommand(
       Collection.PROJECTBUILDER,
       'init',
       [],
-      [
-        {
-          name: 'base64-string',
-          value: buffer,
-        },
-        {
-          name: 'package-manager',
-          value: packageManager,
-        },
-      ],
+      PMFlags,
     ),
     false,
     `./${name.value as string}`,
