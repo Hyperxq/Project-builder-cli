@@ -14,7 +14,6 @@ import npa from 'npm-package-arg';
 import { json } from 'npm-registry-fetch';
 import { Input } from '../commands';
 import { packageManagerCommands } from '../enums/package-manager.enum';
-import { CLI } from '../interfaces/template.interface';
 import { CLIFactory, SchematicsCli } from '../lib/CLI';
 import {
   Spinner,

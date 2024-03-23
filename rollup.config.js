@@ -1,49 +1,56 @@
-import resolve from '@rollup/plugin-node-resolve';
-import terser from '@rollup/plugin-terser';
-import commonjs from '@rollup/plugin-commonjs';
-import peerDepsExternal from 'rollup-plugin-peer-deps-external';
-import typescript from '@rollup/plugin-typescript';
-import copy from 'rollup-plugin-copy';
-import builtins from 'rollup-plugin-node-builtins';
+import json from '@rollup/plugin-json';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
+import swc from '@rollup/plugin-swc';
+
 import addShebang from 'rollup-plugin-add-shebang';
-import globals from 'rollup-plugin-node-globals';
-import cleaner from 'rollup-plugin-cleaner';
+import tsConfigPaths from "rollup-plugin-tsconfig-paths";
 
 import glob from 'glob';
 import path from 'node:path';
+import { fileURLToPath } from 'url';
+
+import cleaner from 'rollup-plugin-cleaner';
+import copy from 'rollup-plugin-copy';
 import { dts } from 'rollup-plugin-dts';
+import peerDepsExternal from 'rollup-plugin-peer-deps-external';
+
+// Convert the import.meta.url to a file path
+const __filename = fileURLToPath(import.meta.url);
+
+// Get the directory name from the file path
+const __dirname = path.dirname(__filename);
 
 function getInputsFromGlob(pattern) {
   return glob.sync(pattern).reduce((inputs, file) => {
     const name = path.basename(file, path.extname(file));
-    inputs[name] = file;
+    if (name === 'public_api') return inputs;
+    inputs.push(file);
     return inputs;
-  }, {});
+  }, []);
 }
 
-const removeSrcPattern = /^(src[\/\\])(.*?)/gs;
-const normalizeUrl = (url) => url.replace(/\\/g, '/');
-const removeSrcPath = (string) => normalizeUrl(string).replace(removeSrcPattern, '$2');
-
-const tsFilesInActions = getInputsFromGlob('actions/*.ts');
-const tsFilesInCommands = getInputsFromGlob('commands/*.ts');
 const tsFilesInBin = getInputsFromGlob('bin/*.ts');
-const tsFilesInEnums = getInputsFromGlob('enums/*.ts');
-const tsFilesInInterfaces = getInputsFromGlob('interfaces/*.ts');
-const tsFilesInCLI = getInputsFromGlob('lib/CLI/*.ts');
-const tsFilesInReaders = getInputsFromGlob('lib/readers/*.ts');
-const tsFilesInSchematics = getInputsFromGlob('lib/schematics/*.ts');
-const tsFilesInUI = getInputsFromGlob('lib/ui/*.ts');
-const tsFilesInUtils = getInputsFromGlob('lib/utils/*.ts');
 
 const basePlugins = [
-  typescript({ outputToFilesystem: false }),
+  tsConfigPaths(),
   peerDepsExternal(),
-  commonjs(),
-  builtins(),
-  globals(),
-  resolve(),
-  terser(),
+  nodeResolve({ extensions: [".ts", ".js", ".json"] }),
+  swc({
+    include: /\.ts?$/,
+    jsc: {
+      parser: {
+        syntax: 'typescript',
+        tsx: false,
+      },
+      baseUrl: '.',
+      target: 'ES2021',
+    },
+    module: {
+      type: 'commonjs',
+    },
+    tsconfig: path.resolve(__dirname, 'tsconfig.json'),
+  }),
+  json()
 ];
 const baseExternal = [
   'commander',
@@ -51,18 +58,26 @@ const baseExternal = [
   'tty',
   'node-emoji',
   'fs',
+  'ora',
   'path',
   'child_process',
   'node:module',
   '@angular/cli',
   '@nestjs/cli',
   '@angular-devkit/schematics-cli',
-  'npm-package-arg'
+  '@angular-devkit/core',
+  '@angular-devkit/schematics',
+  'npm-registry-fetch',
+  'form-data',
+  'axios',
+  'npm-package-arg',
+  'winston',
+  'winston-console-format'
 ];
 
 export default [
   {
-    input: 'src/index.ts', // Replace with the entry point of your CLI
+    input: 'src/public_api.ts', // Replace with the entry point of your CLI
     output: [
       {
         dir: 'dist',
@@ -73,7 +88,6 @@ export default [
       ...basePlugins,
       cleaner({
         targets: ['./dist/'],
-        silence: false,
       }),
       copy({
         targets: [
@@ -89,21 +103,9 @@ export default [
               return JSON.stringify(packageData, null, 2);
             },
           },
-        ],
-        hook: 'writeBundle',
-      }),
-      copy({
-        targets: [
           {
             src: 'README.md',
             dest: 'dist',
-          },
-          {
-            src: 'lib/**/*.json',
-            dest: 'dist/',
-            rename: (name, extension, fullPath) => {
-                return removeSrcPath(fullPath);
-            },
           },
         ],
         hook: 'writeBundle',
@@ -111,49 +113,17 @@ export default [
     ],
   },
   {
-    input: 'src/index.ts', // Adjust this if you have multiple or different entry points
-    output: [{ file: 'dist/index.d.ts', format: 'es' }],
+    input: 'src/public_api.ts', // Adjust this if you have multiple or different entry points
+    output: [{ file: 'dist/public_api.d.ts', format: 'es' }],
     plugins: [dts()],
   },
-  {
-    input: tsFilesInActions,
-    output: {
-      dir: 'dist/actions',
-      format: 'cjs',
-    },
-    plugins: basePlugins,
-    external: [...baseExternal, 'axios'],
-  },
-  {
-    input: tsFilesInActions,
-    output: {
-      dir: 'dist/actions',
-      format: 'cjs',
-    },
-    plugins: [dts()],
-  },
-  {
-    input: tsFilesInCommands,
-    output: {
-      dir: 'dist/commands',
-      format: 'cjs',
-    },
-    plugins: basePlugins,
-    external: baseExternal,
-  },
-  {
-    input: tsFilesInCommands,
-    output: {
-      dir: 'dist/commands',
-      format: 'cjs',
-    },
-    plugins: [dts()],
-  },
-  {
-    input: tsFilesInBin,
+
+  ...tsFilesInBin.map((file) => ({
+    input: file,
     output: {
       dir: 'dist/bin',
       format: 'cjs',
+      exports: 'auto',
     },
     plugins: [
       ...basePlugins,
@@ -162,147 +132,14 @@ export default [
       }),
     ],
     external: baseExternal,
-  },
-  {
-    input: tsFilesInBin,
+  })),
+  ...tsFilesInBin.map((file) => ({
+    input: file,
     output: {
       dir: 'dist/bin',
       format: 'cjs',
+      exports: 'auto',
     },
     plugins: [dts()],
-  },
-
-  {
-    input: tsFilesInCLI,
-    output: {
-      dir: 'dist/lib/CLI',
-      format: 'cjs',
-      preserveModules: true,
-    },
-    plugins: basePlugins,
-    external: baseExternal,
-  },
-  {
-    input: tsFilesInCLI,
-    output: {
-      dir: 'dist/lib/CLI',
-      format: 'cjs',
-      preserveModules: true,
-    },
-    plugins: [dts()],
-  },
-
-  {
-    input: tsFilesInReaders,
-    output: {
-      dir: 'dist/lib/readers',
-      format: 'cjs',
-      preserveModules: true,
-    },
-    plugins: basePlugins,
-    external: baseExternal,
-  },
-  {
-    input: tsFilesInReaders,
-    output: {
-      dir: 'dist/lib/readers',
-      format: 'cjs',
-      preserveModules: true,
-    },
-    plugins: [dts()],
-  },
-
-  {
-    input: tsFilesInSchematics,
-    output: {
-      dir: 'dist/lib/schematics',
-      format: 'cjs',
-      preserveModules: true,
-    },
-    plugins: basePlugins,
-    external: baseExternal,
-  },
-  {
-    input: tsFilesInSchematics,
-    output: {
-      dir: 'dist/lib/schematics',
-      format: 'cjs',
-      preserveModules: true,
-    },
-    plugins: [dts()],
-  },
-
-  {
-    input: tsFilesInUI,
-    output: {
-      dir: 'dist/lib/ui',
-      format: 'cjs',
-      preserveModules: true,
-    },
-    plugins: basePlugins,
-    external: baseExternal,
-  },
-  {
-    input: tsFilesInUI,
-    output: {
-      dir: 'dist/lib/ui',
-      format: 'cjs',
-      preserveModules: true,
-    },
-    plugins: [dts()],
-  },
-
-  {
-    input: tsFilesInUtils,
-    output: {
-      dir: 'dist/lib/utils',
-      format: 'cjs',
-      preserveModules: true,
-    },
-    plugins: basePlugins,
-    external: baseExternal,
-  },
-  {
-    input: tsFilesInUtils,
-    output: {
-      dir: 'dist/lib/utils',
-      format: 'cjs',
-      preserveModules: true,
-    },
-    plugins: [dts()],
-  },
-  {
-    input: tsFilesInEnums,
-    output: {
-      dir: 'dist/enums',
-      format: 'cjs',
-    },
-    plugins: basePlugins,
-    external: baseExternal,
-  },
-  {
-    input: tsFilesInEnums,
-    output: {
-      dir: 'dist/enums',
-      format: 'cjs',
-    },
-    plugins: [dts()],
-  },
-  {
-    input: tsFilesInInterfaces,
-    output: {
-      dir: 'dist/interfaces',
-      format: 'cjs',
-    },
-    plugins: basePlugins,
-    external: baseExternal,
-  },
-  {
-    input: tsFilesInInterfaces,
-    output: {
-      dir: 'dist/interfaces',
-      format: 'cjs',
-    },
-    plugins: [dts()],
-  },
+  }))
 ];
