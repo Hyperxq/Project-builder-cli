@@ -42,7 +42,6 @@ export class AddCommand extends AbstractCommand {
         },
         'npm',
       )
-      .option('--registry <registry>', 'The NPM registry to use.')
       .option(
         '--package-manager <manager>',
         'The package manager used to install dependencies.     [string] [choices: "npm", "yarn", "pnpm", "cnpm", "bun"]',
@@ -57,6 +56,10 @@ export class AddCommand extends AbstractCommand {
           return value;
         },
         'npm',
+      )
+      .addHelpText(
+        'before',
+        `The <collection-name> can include the version, for example: @builder/astro@1.1.0`,
       )
       .action(
         async (collectionName: string, options: { [key: string]: any }) => {

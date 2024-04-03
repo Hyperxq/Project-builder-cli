@@ -6,8 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import { dasherize } from '@angular-devkit/core/src/utils/strings';
-import { SchematicsException } from '@angular-devkit/schematics';
+import { SchematicsException, strings } from '@angular-devkit/schematics';
 import axios from 'axios';
 import { Input } from '../commands';
 import { CliOptions, Template } from '../interfaces/template.interface';
@@ -77,7 +76,7 @@ const create = async (inputs: Input[] = [], flags: Input[] = []) => {
         buildFlags,
       ),
       false,
-      `./${dasherize(options.name as string)}`,
+      `./${strings.dasherize(options.name as string)}`,
     );
   } catch (e) {
     throw new Error(
