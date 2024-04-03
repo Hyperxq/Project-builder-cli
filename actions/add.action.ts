@@ -114,6 +114,7 @@ const addSchematic = async (inputs: Input[] = [], flags: Input[] = []) => {
         );
       }
     }
+    logger.info(`The collection ${collectionName} was added successfully`);
   } catch (error) {
     logger.error(error.message, [error.code]);
     process.exit(1);
