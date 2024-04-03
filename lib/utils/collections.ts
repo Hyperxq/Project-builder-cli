@@ -50,9 +50,9 @@ export async function checkCollection(
           },
         );
       }
-
-      return isInstalled;
     }
+
+    return isInstalled;
   } catch (error) {
     logger.error(error.message);
     process.exit(1);

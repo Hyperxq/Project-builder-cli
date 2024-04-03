@@ -14,7 +14,6 @@ import npa from 'npm-package-arg';
 import { json } from 'npm-registry-fetch';
 import { Input } from '../commands';
 import { packageManagerCommands } from '../enums/package-manager.enum';
-import { CLI } from '../interfaces/template.interface';
 import { CLIFactory, SchematicsCli } from '../lib/CLI';
 import {
   Spinner,
@@ -109,17 +108,12 @@ const addSchematic = async (inputs: Input[] = [], flags: Input[] = []) => {
             dryRun ? [{ name: 'save-mode', value: dryRun }] : [],
           ),
         );
-
-        logger.info(
-          `The schematic ${addSchematicName} was executed successfully`,
-        );
       } catch (error) {
         logger.error(
           `Something happen when executing the schematic ng-add or builder-add: ${error.message}`,
         );
       }
     }
-    logger.info(`The collection ${collectionName} was added successfully`);
   } catch (error) {
     logger.error(error.message, [error.code]);
     process.exit(1);
@@ -156,8 +150,9 @@ async function isPackageValid(
     const latestVersion: string = response['dist-tags']
       ? response['dist-tags']['latest']
       : '';
+
     spinner.succeed(
-      `Found compatible package:  ${colors.grey(`${name}@${rawSpec && rawSpec !== '*' ? `/${rawSpec}` : '' ?? latestVersion}`)}.`,
+      `Found compatible package:  ${colors.grey(`${name}${rawSpec && rawSpec !== '*' ? `@${rawSpec}` : '@' + latestVersion ?? ''}`)}.`,
     );
 
     return;
