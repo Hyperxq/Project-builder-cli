@@ -108,17 +108,12 @@ const addSchematic = async (inputs: Input[] = [], flags: Input[] = []) => {
             dryRun ? [{ name: 'save-mode', value: dryRun }] : [],
           ),
         );
-
-        logger.info(
-          `The schematic ${addSchematicName} was executed successfully`,
-        );
       } catch (error) {
         logger.error(
           `Something happen when executing the schematic ng-add or builder-add: ${error.message}`,
         );
       }
     }
-    logger.info(`The collection ${collectionName} was added successfully`);
   } catch (error) {
     logger.error(error.message, [error.code]);
     process.exit(1);
