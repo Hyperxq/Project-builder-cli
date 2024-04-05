@@ -17,6 +17,8 @@ export class ExecuteCommand extends AbstractCommand {
     program
       .command('execute <collection> <schematic>')
       .alias('exec')
+      .alias('g')
+      .alias('generate')
       .description('Execute any schematics no matter the workspace')
       .option(
         '-d, --dry-run',
