@@ -84,10 +84,18 @@ const showInfo = async (inputs: Input[] = [], flags: Input[] = []) => {
       process.exit(1);
     }
 
+    // TODO: what happen when the path has '..'?
+
+    const cPath = collectionPath
+      .split('/')
+      .filter((x) => x !== '.' && x !== 'collection.json')
+      .join('/');
+    logger.silly(cPath);
+
     const schema: JsonSchema = JSON.parse(
       JSON.stringify(
         await fetchData(
-          `https://unpkg.com/${collectionName}/${schemaPath.replaceAll('./', '')}`,
+          `https://unpkg.com/${collectionName}${cPath ? '/' + cPath : ''}/${schemaPath.replaceAll('./', '')}`,
         ),
       ),
     );
