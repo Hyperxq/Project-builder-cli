@@ -14,3 +14,4 @@ export * from './dependencies';
 export * from './logger';
 export * from './commands';
 export * from './collections';
+export * from './fetch-data';
