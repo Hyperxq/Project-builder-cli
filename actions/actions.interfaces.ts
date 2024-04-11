@@ -51,6 +51,7 @@ export interface Schematic {
   hidden?: boolean;
   schema?: string;
   aliases?: string[];
+  schematicName?: string;
 }
 
 export interface JsonSchema {

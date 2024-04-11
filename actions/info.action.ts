@@ -33,7 +33,7 @@ const showInfo = async (inputs: Input[] = [], flags: Input[] = []) => {
    * 3. Get the schematics options.
    */
   const collectionName = findInput(inputs, 'collection-name')?.value as string;
-  const schematicName = findInput(inputs, 'schematic-name')?.value as string;
+  let schematicName = findInput(inputs, 'schematic-name')?.value as string;
 
   const packageJson = JSON.parse(
     JSON.stringify(
@@ -66,9 +66,12 @@ const showInfo = async (inputs: Input[] = [], flags: Input[] = []) => {
   }
 
   if (schematicName) {
-    const schematic =
-      schematics[schematicName] ??
-      findSchematicByAlias(schematics, schematicName);
+    let schematic: Schematic = schematics[schematicName];
+
+    if (!schematic) {
+      schematic = findSchematicByAlias(schematics, schematicName);
+      schematicName = schematic.schematicName;
+    }
 
     if (!schematic) {
       logger.error(
@@ -90,7 +93,6 @@ const showInfo = async (inputs: Input[] = [], flags: Input[] = []) => {
       .split('/')
       .filter((x) => x !== '.' && x !== 'collection.json')
       .join('/');
-    logger.silly(cPath);
 
     const schema: JsonSchema = JSON.parse(
       JSON.stringify(
@@ -108,8 +110,8 @@ const showInfo = async (inputs: Input[] = [], flags: Input[] = []) => {
     console.log(
       colors.blue(`
 ${colors.bold('Schematic:')} ${schematicName}
-${schematic.aliases ? `${colors.bold('Alias: ')} ${schematic.aliases}` : ''}
-${getSchemaOptions(schema.properties)}
+${colors.bold('Description:')} ${schematic.description}
+${schematic.aliases ? `${colors.bold('Alias: ')} ${schematic.aliases}\n` : ''}${getSchemaOptions(schema.properties)}
 `),
     );
   } else {
@@ -131,7 +133,7 @@ ${Object.entries(schematics)
     );
 
     logger.info(
-      'To see all the options for any of these schematics use this command: builder exec <collection-name> <schematic-name> --help',
+      'To see all the options for any of these schematics use this command: builder info <collection-name> <schematic-name>',
     );
   }
 };
@@ -145,7 +147,12 @@ function findSchematicByAlias(
       (schematic?.aliases ?? []).some((x) => x === alias),
     ) ?? [];
 
-  return schematic ? schematics[schematicName] : undefined;
+  const response = schematic ? schematics[schematicName] : undefined;
+  if (response) {
+    response.schematicName = schematicName;
+  }
+
+  return response;
 }
 
 function getSchemaOptions(properties: Properties): string {
