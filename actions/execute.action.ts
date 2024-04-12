@@ -91,7 +91,7 @@ const executeSchematic = async (inputs: Input[] = [], flags: Input[] = []) => {
       );
     }
   } catch (error) {
-    logger.error(error.message);
+    logger.error(error.message ?? error);
     process.exit(1);
   }
 };

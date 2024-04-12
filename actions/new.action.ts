@@ -26,7 +26,7 @@ export class NewAction extends AbstractAction {
     try {
       await generateFiles(inputs, flags);
     } catch (error) {
-      logger.error(error.message);
+      logger.error(error.message ?? error);
       process.exit(1);
     }
   }

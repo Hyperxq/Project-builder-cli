@@ -50,7 +50,7 @@ export class InfoCommand extends AbstractCommand {
 
             await this.action.handle(inputs, flags);
           } catch (error) {
-            logger.error(error.message);
+            logger.error(error.message ?? error);
             process.exit(1);
           }
         },
