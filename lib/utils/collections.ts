@@ -54,7 +54,9 @@ export async function checkCollection(
 
     return isInstalled;
   } catch (error) {
-    logger.error(error.message ?? error);
+    if (error?.message) {
+      logger.error(error?.message);
+    }
     process.exit(1);
   }
 }
@@ -85,7 +87,9 @@ export async function uninstallCollection(
       );
     }
   } catch (error) {
-    logger.error(error.message ?? error);
+    if (error?.message) {
+      logger.error(error?.message);
+    }
     process.exit(1);
   }
 }
