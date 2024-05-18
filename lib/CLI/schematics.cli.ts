@@ -61,7 +61,7 @@ export class SchematicsCli extends AbstractCli {
     } catch (error) {
       logger.error(
         'Error when Project Builder was trying to execute the schematic',
-        error.message,
+        [error.message],
       );
       process.exit(1);
     }

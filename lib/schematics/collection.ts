@@ -12,4 +12,5 @@ export enum Collection {
   CUSTOM = '',
   ANGULARBUILDER = '@danils/angular-builder',
   PROJECTBUILDER = '@danils/project-builder',
+  SM = '@pbuilder/sm',
 }

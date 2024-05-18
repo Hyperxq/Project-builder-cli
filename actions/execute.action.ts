@@ -27,6 +27,7 @@ export class ExecuteAction extends AbstractAction {
 const executeSchematic = async (inputs: Input[] = [], flags: Input[] = []) => {
   try {
     const collectionInput = findInput(inputs, 'collection')?.value as string;
+    const keepInstalled = findInput(flags, 'keep-installed')?.value as string;
     const schematic = findInput(inputs, 'schematic')?.value as string;
     const sendPM = findInput(flags, 'send-pm')?.value as boolean;
     const sendRegistry = findInput(flags, 'send-registry')?.value as boolean;
@@ -82,7 +83,7 @@ const executeSchematic = async (inputs: Input[] = [], flags: Input[] = []) => {
       schematicCli.getExecuteCommand(collection, schematic, [], flagsFilted),
     );
 
-    if (!isAlreadyInstalled) {
+    if (!isAlreadyInstalled && !keepInstalled) {
       await uninstallCollection(
         collectionInput,
         process.cwd(),
