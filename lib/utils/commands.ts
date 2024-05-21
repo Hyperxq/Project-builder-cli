@@ -36,7 +36,7 @@ export function spawnAsync(
         }
       });
       child.on('error', (error) => {
-        logger.error('Spawn error:', error);
+        logger.error('Spawn error:', [error]);
       });
     } catch (e) {
       logger.error(e);

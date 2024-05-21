@@ -6,19 +6,13 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import { join } from 'path';
+import { strings } from '@angular-devkit/schematics';
+import * as fs from 'fs';
 import { Input } from '../commands';
 import { CLIFactory, SchematicsCli } from '../lib/CLI';
 import { CLI } from '../lib/CLI/cli.enum';
-import projectBuilder from '../lib/config/library-schematics.json';
 import { Collection } from '../lib/schematics';
-import {
-  checkCollection,
-  colors,
-  findInput,
-  logger,
-  uninstallCollection,
-} from '../lib/utils';
+import { colors, findInput, logger, spawnAsync } from '../lib/utils';
 import { AbstractAction } from './abstract.action';
 
 export class NewAction extends AbstractAction {
@@ -36,7 +30,10 @@ export class NewAction extends AbstractAction {
 
 const generateFiles = async (inputs: Input[] = [], flags: Input[] = []) => {
   // TODO: the name can have a path
-  const name = findInput(inputs, 'library-name');
+  const name = strings.dasherize(findInput(inputs, 'name').value as string);
+  const author: Input = findInput(inputs, 'author');
+  const bundler: Input = findInput(flags, 'bundler');
+  const skipInstall: Input = findInput(flags, 'skip-installation');
   const packageManager = findInput(flags, 'package-manager')?.value as
     | 'npm'
     | 'yarn'
@@ -44,74 +41,87 @@ const generateFiles = async (inputs: Input[] = [], flags: Input[] = []) => {
     | 'cnpm'
     | 'bun';
   const dryRun = findInput(flags, 'dry-run')?.value as boolean;
-  /*
-   * 1. Create the base project.
-   * 2. Implement formatter and linters (pending to create the eslint schematic)
-   * 3. Create empty folders (an schematic)
-   * 4. Delete default files and folders.
-   * 5. Add Docs.
-   * 6. Implement the bundler.
-   * */
 
   const schematicCli = CLIFactory(CLI.SCHEMATICS) as SchematicsCli;
 
-  logger.info(
-    'Creating the library project named: ' + colors.bold(name.value as string),
-  );
+  logger.info('Creating the library project named: ' + colors.bold(name));
 
-  await schematicCli.runCommand(
-    schematicCli.getNewCommand(
-      inputs.map((i) => i.value as string),
-      flags,
-    ),
-  );
+  /*
+   * 1. Init empty repo.
+   * 2. Execute new schematic.
+   * 3. Install packages (if the user wants).
+   * 4. Implements dry-run.
+   */
 
-  await checkCollection(
-    Collection.PROJECTBUILDER,
-    join(process.cwd(), name.value as string),
-    packageManager,
-  );
-
-  const buffer = Buffer.from(JSON.stringify(projectBuilder)).toString('base64');
-
-  const PMFlags: Input[] = [
-    {
-      name: 'base64-string',
-      value: buffer,
-    },
-    {
-      name: 'package-manager',
-      value: packageManager,
-    },
+  await initProject(packageManager, strings.dasherize(name), dryRun);
+  const options = [
+    findInput(inputs, 'name'),
+    bundler,
+    findInput(flags, 'dry-run'),
   ];
+  if (author.value) {
+    options.push(author);
+  }
+  await schematicCli.runCommand(
+    schematicCli.getExecuteCommand(Collection.SM, 'new', [], options),
+    false,
+    `./${!dryRun ? (strings.dasherize(name) as string) : ''}`,
+  );
 
+  installDependencies(
+    packageManager,
+    name,
+    dryRun,
+    skipInstall.value as boolean,
+  );
+
+  if (!dryRun) {
+    logger.info('Project Name: ' + name);
+  }
+};
+
+async function initProject(
+  packageManager: string,
+  projectName: string,
+  dryRun: boolean,
+) {
   if (dryRun) {
-    PMFlags.push({
-      name: 'save-mode',
-      value: dryRun,
-    });
-    PMFlags.push({
-      name: 'dry-run',
-      value: dryRun,
-    });
+    return;
+  }
+  fs.mkdirSync(projectName, { recursive: true });
+
+  const initCommands = {
+    npm: 'init -y',
+    yarn: 'init -y',
+    pnpm: 'init',
+    cnpm: 'init -y',
+    bun: 'init -y',
+  };
+
+  await spawnAsync(packageManager, [initCommands[packageManager]], {
+    cwd: projectName ?? process.cwd(),
+    stdio: 'inherit',
+    shell: true,
+  });
+}
+
+async function installDependencies(
+  packageManager: string,
+  projectName: string,
+  dryRun: boolean = false,
+  skipInstall: boolean = false,
+) {
+  if (dryRun) {
+    return;
   }
 
-  await schematicCli.runCommand(
-    schematicCli.getExecuteCommand(
-      Collection.PROJECTBUILDER,
-      'init',
-      [],
-      PMFlags,
-    ),
-    false,
-    `./${name.value as string}`,
-  );
+  if (dryRun || skipInstall) {
+    return;
+  }
 
-  await uninstallCollection(
-    Collection.PROJECTBUILDER,
-    join(process.cwd(), name.value as string),
-    packageManager,
-  );
-
-  logger.info('Project Name: ' + name.value);
-};
+  await spawnAsync(packageManager, ['install'], {
+    cwd: projectName ?? process.cwd(),
+    stdio: 'inherit',
+    shell: true,
+  });
+}

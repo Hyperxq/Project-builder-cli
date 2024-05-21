@@ -27,6 +27,11 @@ export class ExecuteCommand extends AbstractCommand {
       )
       .option('--registry <registry>', 'The NPM registry to use.')
       .option(
+        '--keep-installed',
+        'If the collection is not install you could keep installed',
+        false,
+      )
+      .option(
         '--package-manager <manager>',
         'The package manager used to install dependencies.     [string] [choices: "npm", "yarn", "pnpm", "cnpm", "bun"]',
         (value: string) => {
@@ -94,7 +99,7 @@ function getUnknownOptions(args: string[], processedArgs: string[]) {
       return { name: name.replace(/^--?/, ''), value };
     } else {
       console.log(
-        `The argument ${arg} is  no following the pattern --[option-name]=[value] or -[option-name]=[value] or --[option-name]`,
+        `The argument ${arg} is no following the pattern --[option-name]=[value] or -[option-name]=[value] or --[option-name]`,
       );
     }
   });

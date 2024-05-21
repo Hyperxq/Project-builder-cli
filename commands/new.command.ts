@@ -17,9 +17,14 @@ export class NewCommand extends AbstractCommand {
     program
       .command('new <library-name> [author]')
       .option(
-        '-b, --bundler <bundler-name>',
+        '--bundler <bundler-name>',
         'With bundler do you want to use to compile the project: rollup, ts',
         'rollup',
+      )
+      .option(
+        '-skip-i, --skip-installation',
+        'You can skip installation when the project is created.',
+        false,
       )
       .option(
         '--package-manager <manager>',
@@ -36,9 +41,14 @@ export class NewCommand extends AbstractCommand {
         },
         'npm',
       )
+      // .option(
+      //   '-s, --silent-mode',
+      //   'Report actions that would be taken without writing out results.',
+      // )
       .option(
         '-d, --dry-run',
         'Report actions that would be taken without writing out results.',
+        false,
       )
       .action(
         async (
@@ -57,7 +67,7 @@ export class NewCommand extends AbstractCommand {
           });
 
           inputs.push({
-            name: 'library-name',
+            name: 'name',
             value: libraryName,
           });
 
