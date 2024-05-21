@@ -65,7 +65,7 @@ const generateFiles = async (inputs: Input[] = [], flags: Input[] = []) => {
   await schematicCli.runCommand(
     schematicCli.getExecuteCommand(Collection.SM, 'new', [], options),
     false,
-    `./${strings.dasherize(name) as string}`,
+    `./${!dryRun ? (strings.dasherize(name) as string) : ''}`,
   );
 
   installDependencies(
@@ -77,10 +77,6 @@ const generateFiles = async (inputs: Input[] = [], flags: Input[] = []) => {
 
   if (!dryRun) {
     logger.info('Project Name: ' + name);
-  } else {
-    logger.info(
-      'The dry-run is activated, for these reason any changes were applied',
-    );
   }
 };
 
