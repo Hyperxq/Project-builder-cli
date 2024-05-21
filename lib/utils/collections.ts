@@ -21,6 +21,7 @@ export async function checkCollection(
   packageManager: string = 'npm',
   dryRun: boolean = false,
   registry?: string,
+  keepInstalled: boolean = false,
 ): Promise<boolean> {
   try {
     const doesPackageJSONExist = await findPackageJson(path ?? process.cwd());
@@ -30,9 +31,15 @@ export async function checkCollection(
     );
 
     if (!isInstalled) {
-      logger.info('Temporal installation package: ' + collection, [
-        `command executed: ${packageManager} ${packageManagerCommands[packageManager]} ${!doesPackageJSONExist ? '-g' : ''} ${collection}`,
-      ]);
+      logger.info(
+        !keepInstalled
+          ? 'Temporal installation package: '
+          : 'Package:' + collection,
+        [
+          // eslint-disable-next-line max-len
+          `command executed: ${packageManager} ${packageManagerCommands[packageManager]} ${!doesPackageJSONExist ? '-g' : ''} ${collection}`,
+        ],
+      );
 
       if (!dryRun) {
         await spawnAsync(
