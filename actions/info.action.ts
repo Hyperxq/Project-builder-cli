@@ -6,16 +6,10 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import { schematic } from '@angular-devkit/schematics';
+import { existsSync } from 'fs';
+import { join, resolve } from 'path';
 import { Input } from '../commands';
-import {
-  colors,
-  fetchData,
-  findInput,
-  getPackageFile,
-  logger,
-} from '../lib/utils';
-import { getSchemaFromPackage } from '../lib/utils/schema.json';
+import { colors, findInput, getPackageFile, logger } from '../lib/utils';
 import {
   JsonSchema,
   Properties,
@@ -32,37 +26,53 @@ export class InfoAction extends AbstractAction {
 }
 
 const showInfo = async (inputs: Input[] = [], flags: Input[] = []) => {
-  /*
-   * 1.1 Get the package.json.
-   * 1.2 Get the collection.json path.
-   * 2.1 Get the collection.json.
-   * 2.2 Get the schema path.
-   * 3. Get the schematics options.
-   */
-
   logger.warn(
-    'This command only works for packages that are on https://unpkg.com/',
+    'This command will first search for the package locally and then search in:  https://unpkg.com/',
   );
 
   const collectionName = findInput(inputs, 'collection-name')?.value as string;
   let schematicName = findInput(inputs, 'schematic-name')?.value as string;
 
-  // Step 1: Get the package.json using the file-finder utility
-  const packageJson = await getPackageFile(collectionName, 'package.json');
-  const collectionPath: string | undefined = packageJson?.schematics;
+  let collection: SchematicCollection;
+  let collectionPath: string;
 
-  if (!collectionPath) {
-    logger.error(
-      `This package doesn't have a schematic path in the package.json`,
+  // Step 1: Check if the collectionName is a local path
+  if (collectionName.startsWith('./') || collectionName.startsWith('../')) {
+    collectionPath = join(process.cwd(), collectionName);
+
+    if (!existsSync(collectionPath)) {
+      logger.error(
+        `The local path ${collectionPath} does not exist or is not accessible.`,
+      );
+      process.exit(1);
+    }
+
+    // Step 1.2: Get the collection.json directly from the local path
+    collection = require(collectionPath);
+  } else {
+    // Step 2: Get the package.json using the file-finder utility
+    const packageJson = await getPackageFile(collectionName, 'package.json');
+
+    if (packageJson === undefined) {
+      logger.error(`We didn't find any package or path: ${collectionName}`);
+      process.exit(1);
+    }
+
+    collectionPath = packageJson?.schematics;
+
+    if (!collectionPath) {
+      logger.error(
+        `This package doesn't have a schematic path in the package.json`,
+      );
+      process.exit(1);
+    }
+
+    // Step 3: Get the collection.json using the file-finder utility
+    collection = await getPackageFile(
+      collectionName,
+      collectionPath.replaceAll('./', ''),
     );
-    process.exit(1);
   }
-
-  // Step 2: Get the collection.json using the file-finder utility
-  const collection: SchematicCollection = await getPackageFile(
-    collectionName,
-    collectionPath.replaceAll('./', ''),
-  );
 
   const schematics = collection?.schematics;
 
@@ -76,7 +86,9 @@ const showInfo = async (inputs: Input[] = [], flags: Input[] = []) => {
 
     if (!schematic) {
       schematic = findSchematicByAlias(schematics, schematicName);
-      schematicName = schematic.schematicName;
+      if (schematic) {
+        schematicName = schematic.schematicName;
+      }
     }
 
     if (!schematic) {
@@ -93,21 +105,35 @@ const showInfo = async (inputs: Input[] = [], flags: Input[] = []) => {
       process.exit(1);
     }
 
-    // TODO: what happens when the path has '..'?
+    let cPath: string;
 
-    const cPath = collectionPath
-      .split('/')
-      .filter((x) => x !== '.' && x !== 'collection.json')
-      .join('/');
+    let packagePath = collectionName;
+    // Handle the schema path based on whether the collection is local or remote
+    if (!collectionName.startsWith('./') && !collectionName.startsWith('../')) {
+      // Remote collection: construct the path as before
+      cPath = collectionPath
+        .split('/')
+        .filter((x) => x !== '.' && x !== 'collection.json')
+        .join('/');
+    } else {
+      packagePath = collectionName
+        .split('/')
+        .filter((x) => x !== 'collection.json')
+        .join('/');
+    }
 
-    // Step 3: Get the schema.json using the file-finder utility
+    const fullSchemaPath = `${cPath ? cPath + '/' : ''}${schemaPath.replaceAll('./', '')}`;
+
+    // Step 4: Get the schema.json using the file-finder utility
     const schema: JsonSchema = await getPackageFile(
-      collectionName,
-      `${cPath ? cPath + '/' : ''}${schemaPath.replaceAll('./', '')}`,
+      packagePath,
+      fullSchemaPath,
     );
 
-    if (!schema.properties) {
-      logger.info(`The schematic: ${schematicName} doesn't have any options.`);
+    if (Object.values(schema?.properties ?? {}).length === 0) {
+      logger.info(
+        `The schematic: ${colors.bold(schematicName)} doesn't have any options.`,
+      );
       process.exit(1);
     }
 
@@ -119,26 +145,36 @@ ${schematic.aliases ? `${colors.bold('Alias: ')} ${schematic.aliases}\n` : ''}${
 `),
     );
   } else {
-    console.log(
-      colors.blue(
-        `List of schematics for ${colors.bold(collectionName)}:
-${Object.entries(schematics)
-  .filter(
-    ([name, options]) =>
-      name !== 'builder-add' && name !== 'ng-add' && !options?.hidden,
-  )
-  .map(([schematic]) => {
-    const aliases = schematics[schematic]?.aliases;
-
-    return `    - builder exec ${collectionName} ${colors.bold(schematic)} ${aliases ? `(aliases: ${aliases.join(', ')})` : ''} [options]`;
-  })
-  .join('\n')}`,
-      ),
+    const schematicEntries = Object.entries(schematics).filter(
+      ([name, options]) =>
+        name !== 'builder-add' && name !== 'ng-add' && !options?.hidden,
     );
 
-    logger.info(
-      'To see all the options for any of these schematics use this command: builder info <collection-name> <schematic-name>',
-    );
+    if (schematicEntries.length > 0) {
+      console.log(
+        colors.blue(
+          `List of schematics for ${colors.bold(collectionName)}:
+  ${schematicEntries
+    .map(([schematic]) => {
+      const aliases = schematics[schematic]?.aliases;
+
+      // eslint-disable-next-line max-len
+      return `    - builder exec ${collectionName} ${colors.bold(schematic)} ${aliases ? `(aliases: ${aliases.join(', ')})` : ''} [options]`;
+    })
+    .join('\n')}`,
+        ),
+      );
+
+      logger.info(
+        'To see all the options for any of these schematics use this command: builder info <collection-name> <schematic-name>',
+      );
+    } else {
+      console.log(
+        colors.yellow(
+          `This collection ${collectionName} doesn't have any schematic.`,
+        ),
+      );
+    }
   }
 };
 

@@ -8,7 +8,7 @@
 
 import axios from 'axios';
 import { existsSync } from 'fs';
-import { join } from 'path';
+import { isAbsolute, join } from 'path';
 
 // Utility to get a file based on package name and file name (with or without internal path)
 export async function getPackageFile(
@@ -16,20 +16,28 @@ export async function getPackageFile(
   fileName: string,
   remotePackageUrl?: string,
 ): Promise<any> {
-  // Step 1: Try to get the file locally or globally
+  // Step 1: Check if packageName is a local path
+  if (isLocalPath(packageName)) {
+    const localFilePath = join(process.cwd(), packageName, fileName);
+    if (existsSync(localFilePath)) {
+      return require(localFilePath);
+    } else {
+      console.error(`Local file not found: ${localFilePath}`);
+
+      return null;
+    }
+  }
+
+  // Step 2: Try to get the file locally or globally
   const filePath = getLocalPackageFilePath(packageName, fileName);
-
   if (filePath && existsSync(filePath)) {
-    // Step 2: If the file exists locally/globally, read and return it
-    const fileContent = require(filePath);
-
-    return fileContent;
+    // If the file exists locally/globally, read and return it
+    return require(filePath);
   }
 
   // Step 3: If not found locally/globally, attempt to fetch it from a remote URL
   const url =
     remotePackageUrl || `https://unpkg.com/${packageName}/${fileName}`;
-
   try {
     const response = await axios.get(url);
 
@@ -42,6 +50,15 @@ export async function getPackageFile(
 
     return null;
   }
+}
+
+// Helper function to determine if the package name is a local path
+function isLocalPath(packageName: string): boolean {
+  return (
+    packageName.startsWith('./') ||
+    packageName.startsWith('../') ||
+    isAbsolute(packageName)
+  );
 }
 
 // Reusing the utility function to get the local or global path to the file
