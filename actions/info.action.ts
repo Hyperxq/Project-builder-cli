@@ -8,7 +8,14 @@
 
 import { schematic } from '@angular-devkit/schematics';
 import { Input } from '../commands';
-import { colors, fetchData, findInput, logger } from '../lib/utils';
+import {
+  colors,
+  fetchData,
+  findInput,
+  getPackageFile,
+  logger,
+} from '../lib/utils';
+import { getSchemaFromPackage } from '../lib/utils/schema.json';
 import {
   JsonSchema,
   Properties,
@@ -32,36 +39,35 @@ const showInfo = async (inputs: Input[] = [], flags: Input[] = []) => {
    * 2.2 Get the schema path.
    * 3. Get the schematics options.
    */
+
+  logger.warn(
+    'This command only works for packages that are on https://unpkg.com/',
+  );
+
   const collectionName = findInput(inputs, 'collection-name')?.value as string;
   let schematicName = findInput(inputs, 'schematic-name')?.value as string;
 
-  const packageJson = JSON.parse(
-    JSON.stringify(
-      await fetchData(`https://unpkg.com/${collectionName}/package.json`),
-    ),
-  );
-
+  // Step 1: Get the package.json using the file-finder utility
+  const packageJson = await getPackageFile(collectionName, 'package.json');
   const collectionPath: string | undefined = packageJson?.schematics;
 
   if (!collectionPath) {
     logger.error(
-      `This package doesn't have a schematic path into the package.json`,
+      `This package doesn't have a schematic path in the package.json`,
     );
     process.exit(1);
   }
 
-  const collection: SchematicCollection = JSON.parse(
-    JSON.stringify(
-      await fetchData(
-        `https://unpkg.com/${collectionName}/${collectionPath.replaceAll('./', '')}`,
-      ),
-    ),
+  // Step 2: Get the collection.json using the file-finder utility
+  const collection: SchematicCollection = await getPackageFile(
+    collectionName,
+    collectionPath.replaceAll('./', ''),
   );
 
   const schematics = collection?.schematics;
 
   if (!schematics) {
-    logger.error(`This collection doesn't have any schematic declared`);
+    logger.error(`This collection doesn't have any schematics declared`);
     process.exit(1);
   }
 
@@ -83,27 +89,25 @@ const showInfo = async (inputs: Input[] = [], flags: Input[] = []) => {
     const schemaPath = schematic?.schema;
 
     if (!schemaPath) {
-      logger.info(`The schematic: ${schematicName} doesn't have any option.`);
+      logger.info(`The schematic: ${schematicName} doesn't have any options.`);
       process.exit(1);
     }
 
-    // TODO: what happen when the path has '..'?
+    // TODO: what happens when the path has '..'?
 
     const cPath = collectionPath
       .split('/')
       .filter((x) => x !== '.' && x !== 'collection.json')
       .join('/');
 
-    const schema: JsonSchema = JSON.parse(
-      JSON.stringify(
-        await fetchData(
-          `https://unpkg.com/${collectionName}${cPath ? '/' + cPath : ''}/${schemaPath.replaceAll('./', '')}`,
-        ),
-      ),
+    // Step 3: Get the schema.json using the file-finder utility
+    const schema: JsonSchema = await getPackageFile(
+      collectionName,
+      `${cPath ? cPath + '/' : ''}${schemaPath.replaceAll('./', '')}`,
     );
 
     if (!schema.properties) {
-      logger.info(`The schematic: ${schematicName} doesn't have any option.`);
+      logger.info(`The schematic: ${schematicName} doesn't have any options.`);
       process.exit(1);
     }
 

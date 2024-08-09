@@ -21,3 +21,11 @@ export interface SchematicsCollectionSchema {
   };
   version?: string;
 }
+
+export interface SchematicDependency {
+  temporal?: boolean;
+  type?: 'dev' | 'peer' | 'optional';
+  version?: string;
+  overwrite?: boolean;
+  registry?: string;
+}

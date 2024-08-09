@@ -42,21 +42,6 @@ export class AddCommand extends AbstractCommand {
         },
         'npm',
       )
-      .option(
-        '--package-manager <manager>',
-        'The package manager used to install dependencies.     [string] [choices: "npm", "yarn", "pnpm", "cnpm", "bun"]',
-        (value: string) => {
-          if (
-            !['npm', 'yarn', 'pnpm', 'cnpm', 'bun'].some((v) => value === v)
-          ) {
-            logger.error(`You entered a not valid package manager`);
-            process.exit(1);
-          }
-
-          return value;
-        },
-        'npm',
-      )
       .addHelpText(
         'before',
         `The <collection-name> can include the version, for example: @builder/astro@1.1.0`,
