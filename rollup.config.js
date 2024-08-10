@@ -61,6 +61,7 @@ const baseExternal = [
   'ora',
   'path',
   'child_process',
+  'node:fs/promises',
   'node:module',
   '@angular/cli',
   '@nestjs/cli',

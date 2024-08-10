@@ -23,9 +23,8 @@ export interface SchematicsCollectionSchema {
 }
 
 export interface SchematicDependency {
-  temporal?: boolean;
-  type?: 'dev' | 'peer' | 'optional';
-  version?: string;
+  keepInstall?: boolean;
+  saveDev?: boolean;
   overwrite?: boolean;
   registry?: string;
 }

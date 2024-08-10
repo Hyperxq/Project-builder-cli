@@ -14,7 +14,7 @@ export * from './fetch-data';
 export * from './formatting';
 export * from './logger';
 export * from './file-finder';
-export * from './packageFinder';
+export * from './package-finder';
 export * from './path';
 export * from './schema.json';
 export * from './spinner';
