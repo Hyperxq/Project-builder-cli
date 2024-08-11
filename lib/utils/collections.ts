@@ -24,23 +24,12 @@ export async function checkCollection(
   keepInstalled: boolean = false,
 ): Promise<boolean> {
   try {
-    const doesPackageJSONExist = await findPackageJson(path ?? process.cwd());
     const isInstalled = await isDependencyInstalled(
       collection,
       path ?? __dirname,
     );
 
     if (!isInstalled) {
-      logger.info(
-        !keepInstalled
-          ? 'Temporal installation package: '
-          : 'Package:' + collection,
-        [
-          // eslint-disable-next-line max-len
-          `command executed: ${packageManager} ${packageManagerCommands[packageManager]} ${!doesPackageJSONExist ? '-g' : ''} ${collection}`,
-        ],
-      );
-
       const addAction = new AddAction();
       await addAction.handle(
         [
@@ -71,12 +60,7 @@ export async function uninstallCollection(
   dryRun: boolean = false,
 ) {
   try {
-    logger.info('Uninstalling of temporal package: ' + collection, [
-      'command executed: ' +
-        packageManager +
-        ` ${packageManagerUninstallCommands[packageManager]} ` +
-        collection,
-    ]);
+    logger.info('Uninstalling of temporal package: ' + collection);
 
     if (!dryRun) {
       await spawnAsync(

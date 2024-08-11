@@ -17,7 +17,8 @@ export async function isDependencyInstalled(
   try {
     // Read the package.json file
     const packageJsonPath = await findPackageJson(startDir);
-    if (typeof packageJsonPath === 'boolean') {
+    // logger.info(dependencyName);
+    if (typeof packageJsonPath === 'boolean' || packageJsonPath === undefined) {
       return false;
     }
     const packageJsonString = await readFile(packageJsonPath as string, 'utf8');

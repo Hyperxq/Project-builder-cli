@@ -21,7 +21,6 @@ import {
   findInput,
   findPackageJson,
   getPackageFile,
-  isDependencyInstalled,
   logger,
   uninstallCollection,
 } from '../lib/utils';
@@ -228,16 +227,6 @@ async function installDependencies(
         process.exit(1);
       }
 
-      const isInstalled = await isDependencyInstalled(
-        packageName,
-        packageJsonPath as string,
-      );
-
-      if (isInstalled && !config.overwrite) {
-        logger.info(`Dependency ${packageName} is already installed.`);
-        continue;
-      }
-
       await checkCollection(
         packageName,
         process.cwd(),
@@ -367,9 +356,6 @@ async function uninstallDependencies(
         process.cwd(),
         packageManager,
         dryRun,
-      );
-      logger.info(
-        `Successfully uninstalled temporal dependency: ${packageName}`,
       );
     } catch (error) {
       logger.error(`Failed to uninstall temporal dependency: ${packageName}`);
