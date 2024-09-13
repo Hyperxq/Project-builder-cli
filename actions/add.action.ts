@@ -20,9 +20,11 @@ import {
   colors,
   findInput,
   findPackageJson,
+  installDependencies,
   isDependencyInstalled,
   logger,
   spawnAsync,
+  uninstallDependencies,
 } from '../lib/utils';
 import { SchematicsCollectionSchema } from './../interfaces/schema.interface';
 import { AbstractAction } from './abstract.action';
@@ -98,6 +100,14 @@ const addSchematic = async (inputs: Input[] = [], flags: Input[] = []) => {
         ) {
           addSchematicName = 'builder-add';
         }
+
+        const dependencies = await installDependencies(
+          collectionName,
+          addSchematicName,
+          packageManager,
+          dryRun,
+        );
+
         const schematicCli = CLIFactory() as SchematicsCli;
 
         await schematicCli.runCommand(
@@ -108,6 +118,8 @@ const addSchematic = async (inputs: Input[] = [], flags: Input[] = []) => {
             dryRun ? [{ name: 'save-mode', value: dryRun }] : [],
           ),
         );
+
+        await uninstallDependencies(dependencies, packageManager, dryRun);
       } catch (error) {
         logger.error(
           `Something happen when executing the schematic ng-add or builder-add: ${error.message}`,

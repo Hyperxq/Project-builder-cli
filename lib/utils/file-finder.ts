@@ -9,22 +9,23 @@
 import axios from 'axios';
 import { existsSync } from 'fs';
 import { isAbsolute, join } from 'path';
+import { logger } from './logger';
 
 // Utility to get a file based on package name and file name (with or without internal path)
-export async function getPackageFile(
+export async function getPackageFile<T = any>(
   packageName: string,
-  fileName: string,
+  fileName: string = '',
   remotePackageUrl?: string,
-): Promise<any> {
+): Promise<T | undefined> {
   // Step 1: Check if packageName is a local path
   if (isLocalPath(packageName)) {
     const localFilePath = join(process.cwd(), packageName, fileName);
     if (existsSync(localFilePath)) {
       return require(localFilePath);
     } else {
-      console.error(`Local file not found: ${localFilePath}`);
+      logger.error(`Local file not found: ${localFilePath}`);
 
-      return null;
+      return undefined;
     }
   }
 
@@ -43,7 +44,7 @@ export async function getPackageFile(
 
     return response.data;
   } catch (error) {
-    console.error(
+    logger.error(
       `Failed to fetch ${fileName} for ${packageName} from ${url}:`,
       error,
     );

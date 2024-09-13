@@ -6,6 +6,8 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
+import { SchematicDependency } from '../interfaces/schema.interface';
+
 interface IWorkspaceStructure {
   globalSettings?: {
     [key: string]: {
@@ -60,6 +62,7 @@ export interface JsonSchema {
   title: string;
   type: string;
   properties: Properties;
+  dependenciesConfig?: { [packageName: string]: SchematicDependency };
 }
 
 export interface Properties {
