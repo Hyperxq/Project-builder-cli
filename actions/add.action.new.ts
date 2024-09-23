@@ -8,28 +8,10 @@
 
 /* eslint-disable import/no-extraneous-dependencies */
 
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
-import npa from 'npm-package-arg';
-import { json } from 'npm-registry-fetch';
-import { resolve } from 'path';
-import { catchError, filter, firstValueFrom, take, takeWhile } from 'rxjs';
+import { take, takeWhile } from 'rxjs';
 import { Input } from '../commands';
-import { packageManagerCommands } from '../enums/package-manager.enum';
-import { SchematicsCollectionSchema } from '../interfaces/schema.interface';
-import { CLIFactory, SchematicsCli } from '../lib/CLI';
 import { SchematicOrchestrator } from '../lib/singleton';
-import {
-  Spinner,
-  colors,
-  findInput,
-  findPackageJson,
-  installDependencies,
-  isDependencyInstalled,
-  logger,
-  spawnAsync,
-  uninstallDependencies,
-} from '../lib/utils';
+import { findInput } from '../lib/utils';
 import { AbstractAction } from './abstract.action';
 
 export class AddAction extends AbstractAction {
