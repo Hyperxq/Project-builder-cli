@@ -7,5 +7,5 @@
  */
 
 export * from './schema.interface';
-export * from './schematicOrchestrator.interface';
+export * from './schematic-orchestrator.interface';
 export * from './template.interface';

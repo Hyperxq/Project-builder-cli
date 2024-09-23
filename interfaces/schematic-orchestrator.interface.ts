@@ -9,6 +9,7 @@
 import { Subject } from 'rxjs';
 
 export interface LevelInfo {
+  collectionName: string;
   subject: Subject<void>; // A Subject that emits when the level is ready to proceed
   childCount: number; // Number of child nodes in this level
   completedChildren: number; // Number of children that have completed their tasks

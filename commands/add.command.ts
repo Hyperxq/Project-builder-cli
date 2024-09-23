@@ -8,6 +8,8 @@
 
 import { kebabCase } from 'case-anything';
 import { Command } from 'commander';
+import { firstValueFrom } from 'rxjs';
+import { SchematicOrchestrator } from '../lib/singleton';
 import { logger } from '../lib/utils';
 import { AbstractCommand } from './abstract.command';
 import { Input } from './command.input.interface';
@@ -64,7 +66,21 @@ export class AddCommand extends AbstractCommand {
               value: collectionName,
             });
 
-            await this.action.handle(inputs, flags);
+            /*
+             * 1. Get the orchestrator instance.
+             * 2. Let's say to the orchestrator that start the process.
+             * 3. Wait to the process finish.
+             * 4. Continue
+             */
+
+            const waitUntilComplete = SchematicOrchestrator.startProcess(
+              inputs,
+              flags,
+            );
+
+            await firstValueFrom(waitUntilComplete.asObservable());
+
+            // await this.action.handle(inputs, flags);
           } catch (error) {
             if (error?.message) {
               logger.error(error?.message);

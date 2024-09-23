@@ -6,46 +6,66 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
+import { v4 } from 'uuid';
+import { AddAction } from '../../actions/add.action';
+import { Input } from '../../commands';
 import { DependencyInfo, LevelInfo } from '../../interfaces';
-/**
- * @license
- * Copyright Google LLC All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
 
 export class SchematicOrchestrator {
   static #instance: SchematicOrchestrator;
   static #id: string;
-  static #currentLevel: number;
-  static #conflictVersionResolution: 'latest' | 'oldest' | 'skip';
-  static #errorState: boolean;
+  static #currentLevel: number = 0;
+  // TODO: add as a command option.
+  static #conflictVersionResolution: 'latest' | 'oldest' | 'skip' = 'skip';
+  static #errorState: boolean = false;
   static #levelsInfo: Map<number, LevelInfo>;
-  static #processWasCompleted: Subject<void>;
+  static #processWasCompleted: Subject<void> = new Subject<void>();
+  static #notifyCompletation: Subject<string> = new Subject<string>();
   static #dependenciesInstalled: Map<string, DependencyInfo>;
   static #installationState: Map<string, boolean>;
 
   private constructor() {}
 
-  public static get instance(): SchematicOrchestrator {
+  //* Only for setting all related with the collection and level.
+  public static startInstallation(collectionName: string): {
+    id: string;
+    waitInstallationFinished: Observable<string>; // * the subject for this builder-add
+    notifyExecutionCompletion: () => void;
+  } {
+    const id = v4();
+
     if (!SchematicOrchestrator.#instance) {
-      SchematicOrchestrator.#instance = new SchematicOrchestrator();
+      SchematicOrchestrator.#id = id;
     }
 
-    return SchematicOrchestrator.#instance;
+    return {
+      id,
+      notifyExecutionCompletion: () => this.notifyExecutionCompletion(id),
+      waitInstallationFinished: SchematicOrchestrator.#notifyCompletation,
+    };
   }
 
-  public startInstallationProcess(collectionName: string): Subject<void> {
+  static startProcess(inputs: Input[], flags: Input[]): Subject<void> {
+    /*
+     * We need to start the process here:
+     * Call the builder-add with all the flag and inputs needed.
+     *      We know that the builder add will try to get an instance starting all the process.
+     * When the first builder-add call back we will set this as a root
+     */
+    const action = new AddAction();
+    action.handle(inputs, flags);
+
     return SchematicOrchestrator.#processWasCompleted;
   }
 
-  public notifyExecutionCompletion(nodeId: string): void {}
+  static notifyExecutionCompletion(nodeId: string): void {}
 
   public finalizeProcess(nodeId: string): void {
     throw new Error('Method not implemented.');
   }
+
+  public initInstallation(id: string) {}
 
   private uninstallDependencies(level: number): void {
     throw new Error('Method not implemented.');
@@ -53,6 +73,17 @@ export class SchematicOrchestrator {
 
   private installDependencies(level: number): void {
     throw new Error('Method not implemented.');
+  }
+
+  private initLevel(
+    levelInfo: Pick<LevelInfo, 'collectionName' | 'childCount' | 'nodeIds'>,
+  ) {
+    SchematicOrchestrator.#levelsInfo.set(SchematicOrchestrator.#currentLevel, {
+      ...levelInfo,
+      subject: new Subject<void>(),
+      completedChildren: 0,
+      isReady: false,
+    });
   }
 
   private executeBuilderAdds(level: number): void {
@@ -97,5 +128,10 @@ export class SchematicOrchestrator {
 
   private logState(level: number): void {
     throw new Error('Method not implemented.');
+  }
+
+  private cleanState() {
+    SchematicOrchestrator.#instance = undefined;
+    SchematicOrchestrator.#id = undefined;
   }
 }
