@@ -7,9 +7,15 @@
  */
 
 import { existsSync } from 'fs';
-import { join } from 'path';
+import { isAbsolute, join } from 'path';
 import { Input } from '../commands';
-import { colors, findInput, getPackageFile, logger } from '../lib/utils';
+import {
+  colors,
+  findInput,
+  getPackageFile,
+  isLocalPath,
+  logger,
+} from '../lib/utils';
 import {
   JsonSchema,
   Properties,
@@ -37,8 +43,11 @@ const showInfo = async (inputs: Input[] = [], _flags: Input[] = []) => {
   let collectionPath: string;
 
   // Step 1: Check if the collectionName is a local path
-  if (collectionName.startsWith('./') || collectionName.startsWith('../')) {
-    collectionPath = join(process.cwd(), collectionName);
+
+  if (isLocalPath(collectionName)) {
+    collectionPath = !isAbsolute(collectionName)
+      ? join(process.cwd(), collectionName)
+      : collectionName;
 
     if (!existsSync(collectionPath)) {
       logger.error(
@@ -62,7 +71,7 @@ const showInfo = async (inputs: Input[] = [], _flags: Input[] = []) => {
 
     if (!collectionPath) {
       logger.error(
-        `This package doesn't have a schematic path in the package.json`,
+        `This package doesn't have a collection path in the package.json`,
       );
       process.exit(1);
     }

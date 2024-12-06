@@ -6,6 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
+import { normalize } from '@angular-devkit/core';
 import axios from 'axios';
 import { existsSync } from 'fs';
 import { isAbsolute, join } from 'path';
@@ -46,7 +47,7 @@ export async function getPackageFile<T = any>(
   } catch (error) {
     logger.error(
       `Failed to fetch ${fileName} for ${packageName} from ${url}:`,
-      error,
+      [error.message ?? ''],
     );
 
     return null;
@@ -54,12 +55,10 @@ export async function getPackageFile<T = any>(
 }
 
 // Helper function to determine if the package name is a local path
-function isLocalPath(packageName: string): boolean {
-  return (
-    packageName.startsWith('./') ||
-    packageName.startsWith('../') ||
-    isAbsolute(packageName)
-  );
+export function isLocalPath(packageName: string): boolean {
+  const path = normalize(packageName).replace(/\\/g, '/');
+
+  return path.startsWith('./') || path.startsWith('../') || isAbsolute(path);
 }
 
 // Reusing the utility function to get the local or global path to the file
@@ -93,6 +92,7 @@ function getLocalPackageUrl(packageName: string) {
   return null;
 }
 
+// TODO: if the user uses another package manager, this function will not work
 function getGlobalNodeModulesPath() {
   const { execSync } = require('child_process');
 

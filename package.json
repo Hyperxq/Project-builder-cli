@@ -1,6 +1,6 @@
 {
   "name": "@pbuilder/cli",
-  "version": "1.6.4",
+  "version": "1.7.0",
   "description": "Project Builder - modern, fast, powerful node.js web framework to create complex projects and execute schematics",
   "private": false,
   "engines": {
@@ -16,9 +16,8 @@
     "clean": "rimraf dist",
     "build": "rollup -c --bundleConfigAsCjs",
     "build:watch": "tsc -p tsconfig.json --watch",
-    "test": "echo \"Error: no test specified\" && exit 1",
     "format": "prettier --write .",
-    "test:local": "npm uninstall @pbuilder/cli -g && npm run build && cd dist && npm link",
+    "test:local": "npm uninstall @pbuilder/cli -g && bun run build && cd dist && npm link",
     "publish:verdaccio": "npm run build && cd dist && npm publish --registry http://localhost:4873",
     "publish": "npm run build && cd dist && npm publish --access=public",
     "prepare": "husky install"

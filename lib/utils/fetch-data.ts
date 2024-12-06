@@ -20,7 +20,7 @@ export async function fetchData<Response = any>(
 
     return data;
   } catch (error) {
-    logger.error('Trying to fetching data ocurred something:', [
+    logger.error('Trying to fetching data occurred something:', [
       error.message,
       url,
     ]);

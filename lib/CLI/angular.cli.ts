@@ -9,7 +9,7 @@
 import { execSync } from 'child_process';
 import { Input } from '../../commands';
 import { EMOJIS } from '../ui';
-import { colors } from '../utils';
+import { colors, logger } from '../utils';
 import { AbstractCli } from './abstract.cli';
 
 export class AngularCli extends AbstractCli {
@@ -24,7 +24,7 @@ export class AngularCli extends AbstractCli {
 
       return require.resolve(globalNodeModulesPath + '/@angular/cli/bin/ng.js');
     } catch (e) {
-      console.log(e);
+      logger.error(e.message ?? '');
       throw new Error(
         `${colors.blue(
           EMOJIS['BROKEN_HEART'] +
