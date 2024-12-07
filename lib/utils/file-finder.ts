@@ -56,7 +56,9 @@ export async function getPackageFile<T = any>(
 
 // Helper function to determine if the package name is a local path
 export function isLocalPath(packageName: string): boolean {
-  const path = normalize(packageName).replace(/\\/g, '/');
+  const path = packageName.replace(/\\/g, '/');
+
+  console.log(path);
 
   return path.startsWith('./') || path.startsWith('../') || isAbsolute(path);
 }
