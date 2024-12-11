@@ -58,8 +58,6 @@ export async function getPackageFile<T = any>(
 export function isLocalPath(packageName: string): boolean {
   const path = packageName.replace(/\\/g, '/');
 
-  console.log(path);
-
   return path.startsWith('./') || path.startsWith('../') || isAbsolute(path);
 }
 

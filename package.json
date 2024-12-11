@@ -1,6 +1,6 @@
 {
   "name": "@pbuilder/cli",
-  "version": "1.7.6",
+  "version": "1.7.8",
   "description": "Project Builder - modern, fast, powerful node.js web framework to create complex projects and execute schematics",
   "private": false,
   "engines": {
