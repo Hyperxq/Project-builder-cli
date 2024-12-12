@@ -1,6 +1,6 @@
 {
   "name": "@pbuilder/cli",
-  "version": "1.7.8",
+  "version": "1.7.10",
   "description": "Project Builder - modern, fast, powerful node.js web framework to create complex projects and execute schematics",
   "private": false,
   "engines": {
@@ -49,7 +49,7 @@
     "@angular-devkit/schematics": "^19.0.4",
     "@angular-devkit/schematics-cli": "^19.0.4",
     "@danils/angular-builder": "^0.0.67",
-    "@pbuilder/sm": "^1.4.2",
+    "@pbuilder/sm": "1.4.4",
     "@schematics/angular": "^17.0.1",
     "@types/npm-registry-fetch": "^8.0.7",
     "ansi-colors": "^4.1.3",
