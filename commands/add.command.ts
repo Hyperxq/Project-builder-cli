@@ -16,6 +16,9 @@ export class AddCommand extends AbstractCommand {
   public load(program: Command) {
     program
       .command('add <collection-name>')
+      .description(
+        'Add a schematic library to the project, so if the library has a builder-add/ng-add it will be executed after the installation',
+      )
       .option(
         '--save-dev',
         'Add the collection package to the Dev dependencies',
@@ -27,21 +30,6 @@ export class AddCommand extends AbstractCommand {
         false,
       )
       .option('--registry <registry>', 'The NPM registry to use.')
-      .option(
-        '--package-manager <manager>',
-        'The package manager used to install dependencies.     [string] [choices: "npm", "yarn", "pnpm", "cnpm", "bun"]',
-        (value: string) => {
-          if (
-            !['npm', 'yarn', 'pnpm', 'cnpm', 'bun'].some((v) => value === v)
-          ) {
-            logger.error(`You entered a not valid package manager`);
-            process.exit(1);
-          }
-
-          return value;
-        },
-        'npm',
-      )
       .option(
         '--package-manager <manager>',
         'The package manager used to install dependencies.     [string] [choices: "npm", "yarn", "pnpm", "cnpm", "bun"]',

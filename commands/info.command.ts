@@ -17,6 +17,9 @@ export class InfoCommand extends AbstractCommand {
     program
       .command('info <collection-name> [schematic-name]')
       .option('--registry <registry>', 'The NPM registry to use.')
+      .description(
+        'Show information about a schematic or a collection, so you can see all the options allowed by a schematic',
+      )
       .addHelpText(
         'before',
         `You can see all the schematics that a collections has or see all the options allowed by a schematic`,

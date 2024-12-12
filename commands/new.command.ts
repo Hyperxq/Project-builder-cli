@@ -16,6 +16,7 @@ export class NewCommand extends AbstractCommand {
   public load(program: Command) {
     program
       .command('new <library-name> [author]')
+      .description('Create a new schematic library ready to be published')
       .option(
         '--bundler <bundler-name>',
         'With bundler do you want to use to compile the project: rollup, ts',
