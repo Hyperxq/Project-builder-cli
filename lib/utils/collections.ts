@@ -6,14 +6,11 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import { join } from 'path';
-import {
-  packageManagerCommands,
-  packageManagerUninstallCommands,
-} from '../../enums/package-manager.enum';
+import { packageManagerUninstallCommands } from '../../enums/package-manager.enum';
 import { spawnAsync } from './commands';
-import { findPackageJson, isDependencyInstalled } from './dependencies';
+import { isDependencyInstalled } from './dependencies';
 import { logger } from './logger';
+import { AddAction } from '../../actions/add.action';
 
 export async function checkCollection(
   collection: string,
@@ -21,35 +18,27 @@ export async function checkCollection(
   packageManager: string = 'npm',
   dryRun: boolean = false,
   registry?: string,
+  keepInstalled: boolean = false,
 ): Promise<boolean> {
   try {
-    const doesPackageJSONExist = await findPackageJson(path ?? process.cwd());
     const isInstalled = await isDependencyInstalled(
       collection,
       path ?? __dirname,
     );
 
     if (!isInstalled) {
-      logger.info('Temporal installation package: ' + collection, [
-        `command executed: ${packageManager} ${packageManagerCommands[packageManager]} ${!doesPackageJSONExist ? '-g' : ''} ${collection}`,
-      ]);
-
-      if (!dryRun) {
-        await spawnAsync(
-          packageManager,
-          [
-            packageManagerCommands[packageManager],
-            !doesPackageJSONExist ? '-g' : '',
-            collection,
-            registry ? `--registry=${registry}` : '',
-          ],
-          {
-            cwd: path ?? process.cwd(),
-            stdio: 'inherit',
-            shell: true,
-          },
-        );
-      }
+      const addAction = new AddAction();
+      await addAction.handle(
+        [
+          { name: 'collection-name', value: collection },
+          { name: 'save-dev', value: true }, // Default to devDependency
+        ],
+        [
+          { name: 'registry', value: registry },
+          { name: 'dry-run', value: dryRun },
+          { name: 'package-manager', value: packageManager },
+        ],
+      );
     }
 
     return isInstalled;
