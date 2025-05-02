@@ -14,8 +14,7 @@
   },
   "scripts": {
     "build": "vite build",
-    "build:types": "tsc --declaration --emitDeclarationOnly --outDir dist",
-    "build:watch": "concurrently \"vite build --watch\" \"tsc --declaration --emitDeclarationOnly --outDir dist --watch\"",
+    "build:watch": "vite build --watch",
     "format": "biome format --write",
     "test:local": "bun uninstall @pbuilder/cli -g && bun run build && cd dist && bun link",
     "publish:verdaccio": "bun run build && cd dist && bun publish --registry http://localhost:4873",
@@ -67,7 +66,6 @@
     "@types/node-emoji": "^2.1.0",
     "@types/npm-package-arg": "^6.1.4",
     "@typescript-eslint/eslint-plugin": "^6.20.0",
-    "concurrently": "^9.1.2",
     "glob": "^10.3.10",
     "husky": "^8.0.3",
     "lint-staged": "^15.2.2",
