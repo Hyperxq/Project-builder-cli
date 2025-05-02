@@ -13,8 +13,8 @@
     "forceConsistentCasingInFileNames": true,
     "incremental": true,
     "tsBuildInfoFile": "./dist/tsbuildinfo",
-    "types": ["node"],
+    "types": ["node"]
   },
   "include": ["actions", "bin", "commands", "enums", "lib", "src"],
-  "exclude": ["node_modules"],
+  "exclude": ["node_modules"]
 }

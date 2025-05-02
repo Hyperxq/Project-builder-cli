@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import { get } from 'node-emoji';
+import { get } from 'node-emoji'
 
 export const EMOJIS: { [key: string]: any } = {
   HEART: get('heart'),
@@ -26,4 +26,4 @@ export const EMOJIS: { [key: string]: any } = {
   BOOM: get('boom'),
   PRAY: get('pray'),
   WINE: get('wine_glass'),
-};
+}

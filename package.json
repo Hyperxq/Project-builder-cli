@@ -16,7 +16,7 @@
     "clean": "rimraf dist",
     "build": "rollup -c --bundleConfigAsCjs",
     "build:watch": "tsc -p tsconfig.json --watch",
-    "format": "prettier --write .",
+    "format": "biome format --write",
     "test:local": "npm uninstall @pbuilder/cli -g && bun run build && cd dist && bun link",
     "publish:verdaccio": "npm run build && cd dist && npm publish --registry http://localhost:4873",
     "publish": "npm run build && cd dist && npm publish --access=public",
@@ -31,11 +31,7 @@
       "pre-commit": "lint-staged"
     }
   },
-  "keywords": [
-    "Schematics",
-    "Angular 17+",
-    "Nestjs"
-  ],
+  "keywords": ["Schematics", "Angular 17+", "Nestjs"],
   "author": "Hyperxq",
   "license": "ISC",
   "dependencies": {
@@ -60,6 +56,7 @@
     "yargs": "^17.7.2"
   },
   "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
     "@commitlint/cli": "^18.6.0",
     "@commitlint/config-conventional": "^18.6.0",
     "@rollup/plugin-alias": "^5.1.0",

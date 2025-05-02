@@ -6,8 +6,8 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import { createLogger, format, transports } from 'winston';
-import { consoleFormat } from 'winston-console-format';
+import { createLogger, format, transports } from 'winston'
+import { consoleFormat } from 'winston-console-format'
 
 export const logger = createLogger({
   level: 'silly',
@@ -40,7 +40,7 @@ export const logger = createLogger({
     // new transports.File({filename: 'logs/exceptions.log', level: 'error'}),
     // new transports.File({filename: 'logs/info.log', level: 'info'}),
   ],
-});
+})
 
 // logger.exceptions.handle(
 //     new transports.File({filename: 'logs/exceptions.log', level: 'error'}),

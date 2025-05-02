@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-export * from './abstract.action';
-export * from './execute.action';
-export * from './create.action';
-export * from './new.action';
+export * from './abstract.action'
+export * from './execute.action'
+export * from './create.action'
+export * from './new.action'

@@ -6,9 +6,9 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import { SpawnOptions, spawn } from 'child_process';
-import { MESSAGES } from '../ui';
-import { logger } from './logger';
+import { SpawnOptions, spawn } from 'child_process'
+import { MESSAGES } from '../ui'
+import { logger } from './logger'
 
 export function spawnAsync(
   command: string,
@@ -17,31 +17,31 @@ export function spawnAsync(
   collect: boolean = false,
 ): Promise<void> {
   return new Promise((resolve, reject) => {
-    const child = spawn(command, args, options);
+    const child = spawn(command, args, options)
 
     if (collect) {
       child.stdout!.on('data', (data) =>
         resolve(data.toString().replace(/\r\n|\n/, '')),
-      );
+      )
     }
 
     try {
       child.on('close', (code) => {
         if (code === 0) {
-          resolve(null);
+          resolve(null)
         } else {
           // TODO: Remove unused messages
-          logger.error(MESSAGES.RUNNER_EXECUTION_ERROR(`${command}`));
-          reject();
+          logger.error(MESSAGES.RUNNER_EXECUTION_ERROR(`${command}`))
+          reject()
         }
-      });
+      })
       child.on('error', (error) => {
-        logger.error('Spawn error:', [error.message ?? '']);
-        process.exit(1);
-      });
+        logger.error('Spawn error:', [error.message ?? ''])
+        process.exit(1)
+      })
     } catch (e) {
-      logger.error(e.message ?? '');
-      process.exit(1);
+      logger.error(e.message ?? '')
+      process.exit(1)
     }
-  });
+  })
 }

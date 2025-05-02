@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import { normalizeToKebabOrSnakeCase } from '../utils/formatting';
+import { normalizeToKebabOrSnakeCase } from '../utils/formatting'
 
 export class SchematicOption {
   constructor(
@@ -15,24 +15,24 @@ export class SchematicOption {
   ) {}
 
   get normalizedName() {
-    return normalizeToKebabOrSnakeCase(this.name);
+    return normalizeToKebabOrSnakeCase(this.name)
   }
 
   public toCommandString(): string {
     if (typeof this.value === 'string') {
       if (this.name === 'name') {
-        return `--${this.normalizedName}=${this.format()}`;
+        return `--${this.normalizedName}=${this.format()}`
       } else if (this.name === 'version' || this.name === 'path') {
-        return `--${this.normalizedName}=${this.value}`;
+        return `--${this.normalizedName}=${this.value}`
       } else {
-        return `--${this.normalizedName}="${this.value}"`;
+        return `--${this.normalizedName}="${this.value}"`
       }
     } else if (typeof this.value === 'boolean') {
-      const str = this.normalizedName;
+      const str = this.normalizedName
 
-      return this.value ? `--${str}` : `--no-${str}`;
+      return this.value ? `--${str}` : `--no-${str}`
     } else {
-      return `--${this.normalizedName}=${this.value}`;
+      return `--${this.normalizedName}=${this.value}`
     }
   }
 
@@ -41,10 +41,10 @@ export class SchematicOption {
       .split('')
       .reduce((content, char) => {
         if (char === '(' || char === ')' || char === '[' || char === ']') {
-          return `${content}\\${char}`;
+          return `${content}\\${char}`
         }
 
-        return `${content}${char}`;
-      }, '');
+        return `${content}${char}`
+      }, '')
   }
 }

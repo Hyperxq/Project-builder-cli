@@ -1,40 +1,40 @@
-import json from '@rollup/plugin-json';
-import { nodeResolve } from '@rollup/plugin-node-resolve';
-import swc from '@rollup/plugin-swc';
+import json from '@rollup/plugin-json'
+import { nodeResolve } from '@rollup/plugin-node-resolve'
+import swc from '@rollup/plugin-swc'
 
-import addShebang from 'rollup-plugin-add-shebang';
-import tsConfigPaths from "rollup-plugin-tsconfig-paths";
+import addShebang from 'rollup-plugin-add-shebang'
+import tsConfigPaths from 'rollup-plugin-tsconfig-paths'
 
-import glob from 'glob';
-import path from 'node:path';
-import { fileURLToPath } from 'url';
+import glob from 'glob'
+import path from 'node:path'
+import { fileURLToPath } from 'url'
 
-import cleaner from 'rollup-plugin-cleaner';
-import copy from 'rollup-plugin-copy';
-import { dts } from 'rollup-plugin-dts';
-import peerDepsExternal from 'rollup-plugin-peer-deps-external';
+import cleaner from 'rollup-plugin-cleaner'
+import copy from 'rollup-plugin-copy'
+import { dts } from 'rollup-plugin-dts'
+import peerDepsExternal from 'rollup-plugin-peer-deps-external'
 
 // Convert the import.meta.url to a file path
-const __filename = fileURLToPath(import.meta.url);
+const __filename = fileURLToPath(import.meta.url)
 
 // Get the directory name from the file path
-const __dirname = path.dirname(__filename);
+const __dirname = path.dirname(__filename)
 
 function getInputsFromGlob(pattern) {
   return glob.sync(pattern).reduce((inputs, file) => {
-    const name = path.basename(file, path.extname(file));
-    if (name === 'public_api') return inputs;
-    inputs.push(file);
-    return inputs;
-  }, []);
+    const name = path.basename(file, path.extname(file))
+    if (name === 'public_api') return inputs
+    inputs.push(file)
+    return inputs
+  }, [])
 }
 
-const tsFilesInBin = getInputsFromGlob('bin/*.ts');
+const tsFilesInBin = getInputsFromGlob('bin/*.ts')
 
 const basePlugins = [
   tsConfigPaths(),
   peerDepsExternal(),
-  nodeResolve({ extensions: [".ts", ".js", ".json"] }),
+  nodeResolve({ extensions: ['.ts', '.js', '.json'] }),
   swc({
     include: /\.ts?$/,
     jsc: {
@@ -50,8 +50,8 @@ const basePlugins = [
     },
     tsconfig: path.resolve(__dirname, 'tsconfig.json'),
   }),
-  json()
-];
+  json(),
+]
 const baseExternal = [
   'commander',
   'ansi-colors',
@@ -72,8 +72,8 @@ const baseExternal = [
   'axios',
   'npm-package-arg',
   'winston',
-  'winston-console-format'
-];
+  'winston-console-format',
+]
 
 export default [
   {
@@ -95,12 +95,12 @@ export default [
             src: 'package.json',
             dest: 'dist',
             transform: (contents) => {
-              const packageData = JSON.parse(contents.toString());
-              delete packageData.scripts;
-              delete packageData.devDependencies;
-              delete packageData.keywords;
-              delete packageData.engines;
-              return JSON.stringify(packageData, null, 2);
+              const packageData = JSON.parse(contents.toString())
+              delete packageData.scripts
+              delete packageData.devDependencies
+              delete packageData.keywords
+              delete packageData.engines
+              return JSON.stringify(packageData, null, 2)
             },
           },
           {
@@ -141,5 +141,5 @@ export default [
       exports: 'auto',
     },
     plugins: [dts()],
-  }))
-];
+  })),
+]

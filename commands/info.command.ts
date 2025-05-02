@@ -6,11 +6,11 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import { kebabCase } from 'case-anything';
-import { Command } from 'commander';
-import { logger } from '../lib/utils';
-import { AbstractCommand } from './abstract.command';
-import { Input } from './command.input.interface';
+import { kebabCase } from 'case-anything'
+import { Command } from 'commander'
+import { logger } from '../lib/utils'
+import { AbstractCommand } from './abstract.command'
+import { Input } from './command.input.interface'
 
 export class InfoCommand extends AbstractCommand {
   public load(program: Command) {
@@ -31,32 +31,32 @@ export class InfoCommand extends AbstractCommand {
           options: { [key: string]: any },
         ) => {
           try {
-            const inputs: Input[] = [];
-            const flags: Input[] = [];
+            const inputs: Input[] = []
+            const flags: Input[] = []
 
             Object.entries(options).forEach(([name, value]) => {
               flags.push({
                 name: kebabCase(name),
                 value,
-              });
-            });
+              })
+            })
 
             inputs.push({
               name: 'collection-name',
               value: collectionName,
-            });
+            })
 
             inputs.push({
               name: 'schematic-name',
               value: schematicName,
-            });
+            })
 
-            await this.action.handle(inputs, flags);
+            await this.action.handle(inputs, flags)
           } catch (error) {
-            logger.error(error?.message ?? '');
-            process.exit(1);
+            logger.error(error?.message ?? '')
+            process.exit(1)
           }
         },
-      );
+      )
   }
 }
