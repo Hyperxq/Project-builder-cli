@@ -152,7 +152,7 @@ async function isPackageValid(
       : ''
 
     spinner.succeed(
-      `Found compatible package:  ${colors.grey(`${name}${rawSpec && rawSpec !== '*' ? `@${rawSpec}` : ('@' + latestVersion ?? '')}`)}.`,
+      `Found compatible package:  ${colors.grey(`${name}${rawSpec && rawSpec !== '*' ? `@${rawSpec}` : '@' + (latestVersion ?? '')}`)}.`,
     )
 
     return
