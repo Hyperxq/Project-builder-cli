@@ -6,6 +6,6 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-export * from './prefixes';
-export * from './emojis';
-export * from './messages';
+export * from './prefixes'
+export * from './emojis'
+export * from './messages'

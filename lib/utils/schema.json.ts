@@ -6,8 +6,8 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import { Schematic, Schematics } from '../../actions/actions.interfaces';
-import { fetchData } from './fetch-data';
+import { Schematic, Schematics } from '../../actions/actions.interfaces'
+import { fetchData } from './fetch-data'
 
 export async function getSchemaFromPackage(
   urlBase: string,
@@ -29,9 +29,9 @@ export async function getSchemaFromPackage(
 
 async function callUrl(url, isLocal: boolean = false) {
   if (isLocal) {
-    return await fetchData(url);
+    return await fetchData(url)
   } else {
-    return require.resolve(url);
+    return require.resolve(url)
   }
 }
 
@@ -42,12 +42,12 @@ function findSchematicByAlias(
   const [schematicName, schematic] =
     Object.entries(schematics).find(([schematicName, schematic]) =>
       (schematic?.aliases ?? []).some((x) => x === alias),
-    ) ?? [];
+    ) ?? []
 
-  const response = schematic ? schematics[schematicName] : undefined;
+  const response = schematic ? schematics[schematicName] : undefined
   if (response) {
-    response.schematicName = schematicName;
+    response.schematicName = schematicName
   }
 
-  return response;
+  return response
 }

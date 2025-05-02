@@ -6,11 +6,11 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import { packageManagerUninstallCommands } from '../../enums/package-manager.enum';
-import { spawnAsync } from './commands';
-import { isDependencyInstalled } from './dependencies';
-import { logger } from './logger';
-import { AddAction } from '../../actions/add.action';
+import { packageManagerUninstallCommands } from '../../enums/package-manager.enum'
+import { spawnAsync } from './commands'
+import { isDependencyInstalled } from './dependencies'
+import { logger } from './logger'
+import { AddAction } from '../../actions/add.action'
 
 export async function checkCollection(
   collection: string,
@@ -24,10 +24,10 @@ export async function checkCollection(
     const isInstalled = await isDependencyInstalled(
       collection,
       path ?? __dirname,
-    );
+    )
 
     if (!isInstalled) {
-      const addAction = new AddAction();
+      const addAction = new AddAction()
       await addAction.handle(
         [
           { name: 'collection-name', value: collection },
@@ -38,15 +38,15 @@ export async function checkCollection(
           { name: 'dry-run', value: dryRun },
           { name: 'package-manager', value: packageManager },
         ],
-      );
+      )
     }
 
-    return isInstalled;
+    return isInstalled
   } catch (error) {
     if (error?.message) {
-      logger.error(error?.message);
+      logger.error(error?.message)
     }
-    process.exit(1);
+    process.exit(1)
   }
 }
 
@@ -62,7 +62,7 @@ export async function uninstallCollection(
         packageManager +
         ` ${packageManagerUninstallCommands[packageManager]} ` +
         collection,
-    ]);
+    ])
 
     if (!dryRun) {
       await spawnAsync(
@@ -73,12 +73,12 @@ export async function uninstallCollection(
           stdio: 'inherit',
           shell: true,
         },
-      );
+      )
     }
   } catch (error) {
     if (error?.message) {
-      logger.error(error?.message);
+      logger.error(error?.message)
     }
-    process.exit(1);
+    process.exit(1)
   }
 }
