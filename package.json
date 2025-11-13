@@ -21,7 +21,8 @@
     "build": "rslib build",
     "format:fix": "biome format --write",
     "lint:fix": "biome lint --write",
-    "test:local": "bun run build && bun link"
+    "test:local": "bun run build && bun link",
+    "publish": "bun run build && cd dist && npm publish --access=public"
   },
   "keywords": [
     "Schematics",
