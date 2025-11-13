@@ -9,7 +9,7 @@
       "!./.idea/**",
       "!./.rollup.cache/**",
       "./bin/*.ts",
-      "./lib/**/*.ts"
+      "./lib/**"
     ]
   },
   "formatter": {

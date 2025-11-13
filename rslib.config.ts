@@ -51,6 +51,40 @@ export default defineConfig({
         filename: {
           js: 'builder.js', // 👈 single file: dist/builder.js
         },
+        copy: [
+          {
+            from: './package.json',
+            to: '.', // → dist/package.json,
+            transform(content) {
+              const pkg = JSON.parse(content.toString())
+
+              // Remove fields you don't want in dist
+              delete pkg.scripts
+              delete pkg.devDependencies
+              delete pkg.private
+              delete pkg.files
+              delete pkg.husky
+              delete pkg['lint-staged']
+              delete pkg.bun
+              delete pkg.type // optional, depending on bundling strategy
+
+              // Fix main/bin to point to the built file
+              pkg.main = './builder.js'
+              pkg.bin = { builder: './builder.js' }
+
+              // Return cleaned JSON
+              return JSON.stringify(pkg, null, 2)
+            },
+          },
+          {
+            from: './README.md',
+            to: '.', // optional, but usually nice for npm
+          },
+          {
+            from: './LICENSE',
+            to: '.', // optional
+          },
+        ],
       },
     },
   ],
