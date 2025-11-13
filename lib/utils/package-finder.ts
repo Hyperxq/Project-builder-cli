@@ -1,11 +1,3 @@
-/**
- * @license
- * Copyright Google LLC All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
-
 import { execSync } from 'child_process'
 import { existsSync } from 'fs'
 import { join } from 'path'
@@ -45,7 +37,7 @@ function getGlobalNodeModulesPath(packageName: string) {
     })
 
     return resolvedPath
-  } catch (error) {
+  } catch {
     // If the module isn't found, return null or handle the error
     logger.error(`Module ${packageName} not found globally.`)
 

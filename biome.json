@@ -1,7 +1,17 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.3.5/schema.json",
   "vcs": { "enabled": false, "clientKind": "git", "useIgnoreFile": false },
-  "files": { "ignoreUnknown": false, "ignore": [] },
+  "files": {
+    "ignoreUnknown": false,
+    "includes": [
+      "!./dist/**",
+      "!./node_modules/**",
+      "!./.idea/**",
+      "!./.rollup.cache/**",
+      "./bin/*.ts",
+      "./lib/**/*.ts"
+    ]
+  },
   "formatter": {
     "enabled": true,
     "useEditorconfig": true,
@@ -12,9 +22,9 @@
     "lineWidth": 80,
     "attributePosition": "auto",
     "bracketSpacing": true,
-    "ignore": ["bin/logo.ts"]
+    "includes": ["**", "!**/bin/logo.ts"]
   },
-  "organizeImports": { "enabled": true },
+  "assist": { "actions": { "source": { "organizeImports": "on" } } },
   "linter": {
     "enabled": true,
     "rules": {
@@ -22,9 +32,8 @@
       "complexity": {
         "noBannedTypes": "off",
         "noExtraBooleanCast": "error",
-        "noMultipleSpacesInRegularExpressionLiterals": "error",
         "noUselessCatch": "error",
-        "noWith": "error"
+        "noAdjacentSpacesInRegex": "error"
       },
       "correctness": {
         "noConstAssign": "error",
@@ -34,7 +43,6 @@
         "noGlobalObjectCalls": "error",
         "noInnerDeclarations": "error",
         "noInvalidConstructorSuper": "error",
-        "noNewSymbol": "error",
         "noNonoctalDecimalEscape": "error",
         "noPrecisionLoss": "error",
         "noSelfAssign": "error",
@@ -49,7 +57,9 @@
         "noUnusedVariables": "error",
         "useIsNan": "error",
         "useValidForDirection": "error",
-        "useYield": "error"
+        "useYield": "error",
+        "noInvalidBuiltinInstantiation": "error",
+        "useValidTypeof": "error"
       },
       "security": { "noGlobalEval": "error" },
       "style": { "noNonNullAssertion": "off", "useBlockStatements": "error" },
@@ -58,7 +68,6 @@
         "noCatchAssign": "error",
         "noClassAssign": "error",
         "noCompareNegZero": "error",
-        "noConsole": "error",
         "noControlCharactersInRegex": "error",
         "noDebugger": "error",
         "noDuplicateCase": "error",
@@ -79,17 +88,18 @@
         "noUnsafeNegation": "error",
         "useAwait": "off",
         "useGetterReturn": "error",
-        "useValidTypeof": "error"
+        "noWith": "error"
       }
     },
-    "ignore": [
-      "**/node_modules/",
-      "**/dist/",
-      "./tests/",
-      "**/logo.ts",
-      "**/messages.ts",
-      "**/commitlint.config.js",
-      "**/rollup.config.js"
+    "includes": [
+      "**",
+      "!**/node_modules/",
+      "!**/dist/",
+      "!tests/",
+      "!**/logo.ts",
+      "!**/messages.ts",
+      "!**/commitlint.config.js",
+      "!**/rollup.config.js"
     ]
   },
   "javascript": {
@@ -107,7 +117,7 @@
   },
   "overrides": [
     {
-      "include": ["!packages/**", "**/*_spec.ts"],
+      "includes": ["**/!packages/**", "**/*_spec.ts"],
       "linter": { "rules": { "suspicious": { "noConsole": "off" } } }
     }
   ]

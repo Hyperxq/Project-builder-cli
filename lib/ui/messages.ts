@@ -1,29 +1,21 @@
-/**
- * @license
- * Copyright Google LLC All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
-
-import { colors } from '../utils'
+import chalk from 'chalk'
 import { EMOJIS } from './emojis'
 
 export const MESSAGES = {
   RUNNER_EXECUTION_ERROR: (command: string) =>
     `\nFailed to execute command: ${command}`,
   WELCOME: (name: string, createBy: string) => ` 
-  ${colors.green(
+  ${chalk.green(
     '_______________________________________________________________________________________________________________',
   )}
   
-  ${colors.blue("Template's name")}: ${colors.green(name)}
-  ${colors.blue('Created by')}: ${colors.green(createBy)}
-  ${colors.green(
+  ${chalk.blue("Template's name")}: ${chalk.green(name)}
+  ${chalk.blue('Created by')}: ${chalk.green(createBy)}
+  ${chalk.green(
     '_______________________________________________________________________________________________________________',
   )}
   `,
   CREATING_WORKSPACE: (workspaceName: string) =>
-    `${colors.blue(`Creating the ${colors.bold(workspaceName)} workspace`)}`,
-  WORKSPACE_CREATED: `${colors.green('Workspace created successfully!')} ${EMOJIS.WINE}`,
+    `${chalk.blue(`Creating the ${chalk.bold(workspaceName)} workspace`)}`,
+  WORKSPACE_CREATED: `${chalk.green('Workspace created successfully!')} ${EMOJIS.WINE}`,
 }

@@ -1,20 +1,11 @@
-/**
- * @license
- * Copyright Google LLC All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
-
-export * from './collections'
-export * from './color'
-export * from './commands'
-export * from './dependencies'
-export * from './fetch-data'
-export * from './file-finder'
-export * from './formatting'
-export * from './logger'
-export * from './package-finder'
-export * from './path'
-export * from './spinner'
-export * from './workspaces'
+export { checkCollection, uninstallCollection } from './collections'
+export { spawnAsync } from './commands'
+export { isDependencyInstalled, findPackageJson } from './dependencies'
+export { fetchData } from './fetch-data'
+export { getPackageFile, isLocalPath } from './file-finder'
+export { normalizeToKebabOrSnakeCase } from './formatting'
+export { logger } from './logger'
+export { getLocalPackageUrl } from './package-finder'
+export { getRelativePath, findProjectRoot } from './path'
+export { Spinner } from './spinner'
+export { createWorkspace, CliMap, findInput } from './workspaces'

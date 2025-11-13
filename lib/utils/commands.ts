@@ -1,11 +1,3 @@
-/**
- * @license
- * Copyright Google LLC All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
-
 import { SpawnOptions, spawn } from 'child_process'
 import { MESSAGES } from '../ui'
 import { logger } from './logger'

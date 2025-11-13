@@ -1,14 +1,7 @@
-/**
- * @license
- * Copyright Google LLC All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
-
-import { Input } from '../../commands'
+import { Input } from '../commands'
 import { EMOJIS } from '../ui'
-import { colors, logger } from '../utils'
+import { logger } from '../utils'
+import chalk from 'chalk'
 import { AbstractCli } from './abstract.cli'
 import { CommandOptions, SchematicCommandOptions } from './cli.interfaces'
 
@@ -22,9 +15,9 @@ export class SchematicsCli extends AbstractCli {
       return require.resolve('@angular-devkit/schematics-cli/bin/schematics.js')
     } catch (error) {
       logger.error(error.message, [
-        `${colors.red(
+        `${chalk.red(
           `${EMOJIS['BROKEN_HEART']} Schematics CLI doesn't installed, please execute:`,
-        )} ${colors.green('npm i -g @angular-devkit/schematics-cli')}`,
+        )} ${chalk.green('npm i -g @angular-devkit/schematics-cli')}`,
       ])
       process.exit(1)
     }

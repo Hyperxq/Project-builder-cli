@@ -1,16 +1,8 @@
-/**
- * @license
- * Copyright Google LLC All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
-
-import { packageManagerUninstallCommands } from '../../enums/package-manager.enum'
+import { AddAction } from '../actions/add.action'
+import { packageManagerUninstallCommands } from '../enums/package-manager.enum'
 import { spawnAsync } from './commands'
 import { isDependencyInstalled } from './dependencies'
 import { logger } from './logger'
-import { AddAction } from '../../actions/add.action'
 
 export async function checkCollection(
   collection: string,

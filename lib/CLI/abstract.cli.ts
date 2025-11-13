@@ -1,13 +1,5 @@
-/**
- * @license
- * Copyright Google LLC All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
-
 import { SpawnOptions } from 'child_process'
-import { Input } from '../../commands'
+import { Input } from '../commands'
 import { spawnAsync } from '../utils'
 import { CommandOptions } from './cli.interfaces'
 

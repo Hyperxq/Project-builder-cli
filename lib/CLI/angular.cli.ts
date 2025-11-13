@@ -1,15 +1,8 @@
-/**
- * @license
- * Copyright Google LLC All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
-
 import { execSync } from 'child_process'
-import { Input } from '../../commands'
+import { Input } from '../commands'
 import { EMOJIS } from '../ui'
-import { colors, logger } from '../utils'
+import { logger } from '../utils'
+import chalk from 'chalk'
 import { AbstractCli } from './abstract.cli'
 
 export class AngularCli extends AbstractCli {
@@ -26,10 +19,10 @@ export class AngularCli extends AbstractCli {
     } catch (e) {
       logger.error(e.message ?? '')
       throw new Error(
-        `${colors.blue(
+        `${chalk.blue(
           EMOJIS['BROKEN_HEART'] +
             "Angular cli doesn't install, please execute:",
-        )} ${colors.green('npm i -g @angular/cli')}`,
+        )} ${chalk.green('npm i -g @angular/cli')}`,
       )
     }
   }

@@ -1,16 +1,8 @@
-/**
- * @license
- * Copyright Google LLC All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
-
-import { Input } from '../../commands'
+import { Input } from '../commands'
 import { AngularCli, CLIFactory, NestJSCli, SchematicsCli } from '../CLI'
 import { CLI } from '../CLI/cli.enum'
 import { MESSAGES } from '../ui'
-import { colors } from './color'
+import chalk from 'chalk'
 import { Spinner } from './spinner'
 
 export async function createWorkspace(
@@ -37,8 +29,8 @@ export async function createWorkspace(
   } catch (e) {
     spinner.stop()
     throw new Error(
-      colors.bold(
-        colors.red(
+      chalk.bold(
+        chalk.red(
           `something happen when we try to create a new workspace, ${e?.message ?? e}`,
         ),
       ),

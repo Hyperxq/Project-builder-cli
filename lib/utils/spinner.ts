@@ -1,13 +1,5 @@
-/**
- * @license
- * Copyright Google LLC All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
-
 import ora, { Ora } from 'ora'
-import { colors } from './color'
+import chalk from 'chalk'
 
 export class Spinner {
   private readonly spinner: Ora
@@ -40,11 +32,11 @@ export class Spinner {
   }
 
   fail(text?: string): void {
-    this.spinner.fail(text && colors.redBright(text))
+    this.spinner.fail(text && chalk.redBright(text))
   }
 
   warn(text?: string): void {
-    this.spinner.warn(text && colors.yellowBright(text))
+    this.spinner.warn(text && chalk.yellowBright(text))
   }
 
   stop(): void {

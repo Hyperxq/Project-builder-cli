@@ -1,16 +1,9 @@
 #!/usr/bin/env node
-/**
- * @license
- * Copyright Google LLC All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
 
 import { Command, program } from 'commander'
 import { readFileSync } from 'fs'
 import path from 'path'
-import { CommandLoader } from '../commands'
+import { CommandLoader } from '../lib/commands'
 import { logger } from '../lib/utils'
 import logo from './logo'
 

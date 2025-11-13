@@ -1,11 +1,3 @@
-/**
- * @license
- * Copyright Google LLC All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
-
 import { createLogger, format, transports } from 'winston'
 import { consoleFormat } from 'winston-console-format'
 
@@ -41,10 +33,3 @@ export const logger = createLogger({
     // new transports.File({filename: 'logs/info.log', level: 'info'}),
   ],
 })
-
-// logger.exceptions.handle(
-//     new transports.File({filename: 'logs/exceptions.log', level: 'error'}),
-// );
-// logger.rejections.handle(
-//     new transports.File({filename: 'logs/rejections.log'})
-// );

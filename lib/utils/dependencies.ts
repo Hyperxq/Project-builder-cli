@@ -1,11 +1,3 @@
-/**
- * @license
- * Copyright Google LLC All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
-
 import { access, readFile } from 'node:fs/promises'
 import path from 'node:path'
 import { logger } from './logger'
@@ -54,7 +46,7 @@ export async function findPackageJson(
       await access(packageJsonPath)
 
       return packageJsonPath // File found
-    } catch (error) {
+    } catch {
       continueLoop = false
       // File not found in the current directory, move up
       const parentDir = path.dirname(currentDir)

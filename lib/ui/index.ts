@@ -1,11 +1,3 @@
-/**
- * @license
- * Copyright Google LLC All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
-
-export * from './prefixes'
-export * from './emojis'
-export * from './messages'
+export { ERROR_PREFIX, INFO_PREFIX } from './prefixes'
+export { EMOJIS } from './emojis'
+export { MESSAGES } from './messages'

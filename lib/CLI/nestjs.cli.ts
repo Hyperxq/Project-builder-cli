@@ -1,14 +1,6 @@
-/**
- * @license
- * Copyright Google LLC All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.io/license
- */
-
-import { Input } from '../../commands'
+import { Input } from '../commands'
 import { EMOJIS } from '../ui'
-import { colors } from '../utils'
+import chalk from 'chalk'
 import { AbstractCli } from './abstract.cli'
 
 export class NestJSCli extends AbstractCli {
@@ -23,10 +15,10 @@ export class NestJSCli extends AbstractCli {
     } catch (e) {
       console.log(e)
       throw new Error(
-        `${colors.blue(
+        `${chalk.blue(
           EMOJIS['BROKEN_HEART'] +
             " NestJS cli doesn't install, please execute:",
-        )} ${colors.green('npm i -g @nestjs/cli')}`,
+        )} ${chalk.green('npm i -g @nestjs/cli')}`,
       )
     }
   }
