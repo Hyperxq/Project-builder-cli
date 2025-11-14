@@ -5,13 +5,20 @@ import { Command, program } from 'commander';
 import { readFileSync } from 'fs';
 import path from 'path';
 import { CommandLoader } from '../lib/commands';
-import { logger } from '../lib/utils';
+import { loadEffectiveConfig, logger } from '../lib/utils';
 import logo from './logo';
 
 const minNodeVersion = 22;
 
 const bootstrap = async () => {
-  console.log(logo);
+  const { cli } = loadEffectiveConfig();
+  const { showBanner } = cli;
+
+  logger.debug(`Effective config loaded: ${showBanner}`);
+
+  if (showBanner === true) {
+    console.log(logo);
+  }
 
   checkNodeVersion();
 
@@ -28,7 +35,7 @@ const bootstrap = async () => {
 
 function addColorsToHelp() {
   // Start with your custom header
-  const header = `${chalk.bold.green('🚀  Welcome to Project Builder CLI')}\n`;
+  const header = `${chalk.bold.green('🚀  Welcome to Project Builder CLI')}`;
   // Use the original help output and color it
   const base = Command.prototype.helpInformation.call(this);
   // You can color parts by regex or string replace

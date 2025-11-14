@@ -5,5 +5,6 @@ export abstract class AbstractAction {
     inputs?: Input[],
     options?: Input[],
     extraFlags?: string[],
+    
   ): Promise<void>;
 }

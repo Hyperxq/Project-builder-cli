@@ -1,6 +1,12 @@
 export { checkCollection, uninstallCollection } from './collections';
 export { spawnAsync } from './commands';
-export { deleteConfig, getConfig, setConfig } from './config';
+export {
+  deleteConfig,
+  getConfig,
+  listConfig,
+  loadEffectiveConfig,
+  setConfig,
+} from './config';
 export { findPackageJson, isDependencyInstalled } from './dependencies';
 export { fetchData } from './fetch-data';
 export { getPackageFile, isLocalPath } from './file-finder';
