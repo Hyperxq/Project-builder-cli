@@ -14,8 +14,6 @@ const bootstrap = async () => {
   const { cli } = loadEffectiveConfig();
   const { showBanner } = cli;
 
-  logger.debug(`Effective config loaded: ${showBanner}`);
-
   if (showBanner === true) {
     console.log(logo);
   }
