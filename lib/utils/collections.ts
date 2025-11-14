@@ -49,12 +49,14 @@ export async function uninstallCollection(
   dryRun: boolean = false,
 ) {
   try {
-    logger.info('Uninstalling of temporal package: ' + collection, [
-      'command executed: ' +
+    logger.info(
+      'Uninstalling of temporal package: ' +
+        collection +
+        '; command executed: ' +
         packageManager +
         ` ${packageManagerUninstallCommands[packageManager]} ` +
         collection,
-    ]);
+    );
 
     if (!dryRun) {
       await spawnAsync(

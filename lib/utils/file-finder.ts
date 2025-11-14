@@ -37,8 +37,7 @@ export async function getPackageFile<T = any>(
     return response.data;
   } catch (error) {
     logger.error(
-      `Failed to fetch ${fileName} for ${packageName} from ${url}:`,
-      [error.message ?? ''],
+      `Failed to fetch ${fileName} for ${packageName} from ${url}: ${error.message ?? ''}`,
     );
 
     return null;

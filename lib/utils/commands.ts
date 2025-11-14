@@ -28,7 +28,7 @@ export function spawnAsync(
         }
       });
       child.on('error', (error) => {
-        logger.error('Spawn error:', [error.message ?? '']);
+        logger.error(`Spawn error: ${error.message ?? ''}`);
         process.exit(1);
       });
     } catch (e) {

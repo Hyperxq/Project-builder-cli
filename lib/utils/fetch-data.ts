@@ -11,11 +11,10 @@ export async function fetchData<Response = any>(
     );
 
     return data;
-  } catch (error) {
-    logger.error('Trying to fetching data occurred something:', [
-      error.message,
-      url,
-    ]);
+  } catch (error: any) {
+    logger.error(
+      `Trying to fetching data occurred something: ${error?.message ?? ''} (${url})`
+    );
     process.exit(1);
   }
 }
