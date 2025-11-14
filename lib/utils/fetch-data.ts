@@ -1,5 +1,5 @@
-import axios from 'axios'
-import { logger } from '.'
+import axios from 'axios';
+import { logger } from '.';
 
 export async function fetchData<Response = any>(
   url: string,
@@ -8,14 +8,14 @@ export async function fetchData<Response = any>(
   try {
     const { data } = await axios.get<Response>(
       `${url}${query ? '?' + query : ''}`,
-    )
+    );
 
-    return data
+    return data;
   } catch (error) {
     logger.error('Trying to fetching data occurred something:', [
       error.message,
       url,
-    ])
-    process.exit(1)
+    ]);
+    process.exit(1);
   }
 }

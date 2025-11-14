@@ -1,11 +1,11 @@
-import ora, { Ora } from 'ora'
-import chalk from 'chalk'
+import ora, { Ora } from 'ora';
+import chalk from 'chalk';
 
 export class Spinner {
-  private readonly spinner: Ora
+  private readonly spinner: Ora;
 
   /** When false, only fail messages will be displayed. */
-  enabled = true
+  enabled = true;
 
   constructor(text?: string) {
     this.spinner = ora({
@@ -14,38 +14,38 @@ export class Spinner {
       // when the underlying process is sync.
       hideCursor: false,
       discardStdin: false,
-    })
+    });
   }
 
   set text(text: string) {
-    this.spinner.text = text
+    this.spinner.text = text;
   }
 
   succeed(text?: string): void {
     if (this.enabled) {
-      this.spinner.succeed(text)
+      this.spinner.succeed(text);
     }
   }
 
   info(text?: string): void {
-    this.spinner.info(text)
+    this.spinner.info(text);
   }
 
   fail(text?: string): void {
-    this.spinner.fail(text && chalk.redBright(text))
+    this.spinner.fail(text && chalk.redBright(text));
   }
 
   warn(text?: string): void {
-    this.spinner.warn(text && chalk.yellowBright(text))
+    this.spinner.warn(text && chalk.yellowBright(text));
   }
 
   stop(): void {
-    this.spinner.stop()
+    this.spinner.stop();
   }
 
   start(text?: string): void {
     if (this.enabled) {
-      this.spinner.start(text)
+      this.spinner.start(text);
     }
   }
 }

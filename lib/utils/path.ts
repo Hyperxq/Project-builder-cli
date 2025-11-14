@@ -1,10 +1,10 @@
-import { existsSync } from 'fs'
-import { join, resolve } from 'path'
+import { existsSync } from 'fs';
+import { join, resolve } from 'path';
 
 export function getRelativePath(currentPath: string = process.cwd()) {
-  const projectRoot = findProjectRoot() ?? process.cwd()
+  const projectRoot = findProjectRoot() ?? process.cwd();
 
-  return currentPath.replace(projectRoot, '') || '/'
+  return currentPath.replace(projectRoot, '') || '/';
 }
 
 export function findProjectRoot(
@@ -12,11 +12,11 @@ export function findProjectRoot(
   fileToFind: string = 'package.json',
 ) {
   if (existsSync(join(startPath, fileToFind))) {
-    return startPath
+    return startPath;
   }
   if (resolve(startPath, '..') === startPath) {
-    throw new Error('Project root not found')
+    throw new Error('Project root not found');
   }
 
-  return findProjectRoot(resolve(startPath, '..'))
+  return findProjectRoot(resolve(startPath, '..'));
 }

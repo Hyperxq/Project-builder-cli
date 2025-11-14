@@ -1,35 +1,17 @@
-import { createLogger, format, transports } from 'winston'
-import { consoleFormat } from 'winston-console-format'
+import pino from 'pino';
 
-export const logger = createLogger({
-  level: 'silly',
-  format: format.combine(
-    format.timestamp(),
-    format.ms(),
-    format.errors({ stack: true }),
-    format.splat(),
-    format.json(),
-  ),
-  exitOnError: true,
-  transports: [
-    new transports.Console({
-      format: format.combine(
-        format.colorize({ all: true }),
-        format.padLevels(),
-        consoleFormat({
-          showMeta: true,
-          metaStrip: ['timestamp', 'service'],
-          inspectOptions: {
-            depth: Infinity,
-            colors: true,
-            maxArrayLength: Infinity,
-            breakLength: 120,
-            compact: Infinity,
-          },
-        }),
-      ),
-    }),
-    // new transports.File({filename: 'logs/exceptions.log', level: 'error'}),
-    // new transports.File({filename: 'logs/info.log', level: 'info'}),
-  ],
-})
+export const logger = pino({
+  level: 'trace', // Pino uses 'trace' instead of 'silly'
+  transport: {
+    target: 'pino-pretty',
+    options: {
+      colorize: true,
+      translateTime: 'HH:MM:ss.l',
+      ignore: 'pid,hostname',
+      singleLine: false,
+      messageFormat: '{msg} {req.method} {req.url}', // optional
+    },
+  },
+  base: undefined, // omit pid and hostname from logs
+  timestamp: pino.stdTimeFunctions.isoTime, // can switch to epoch or custom
+});

@@ -1,5 +1,5 @@
-export { CLIFactory } from './cli.factory'
-export { AbstractCli } from './abstract.cli'
-export { AngularCli } from './angular.cli'
-export { NestJSCli } from './nestjs.cli'
-export { SchematicsCli } from './schematics.cli'
+export { CLIFactory } from './cli.factory';
+export { AbstractCli } from './abstract.cli';
+export { AngularCli } from './angular.cli';
+export { NestJSCli } from './nestjs.cli';
+export { SchematicsCli } from './schematics.cli';

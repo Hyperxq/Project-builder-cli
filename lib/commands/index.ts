@@ -1,6 +1,6 @@
-export { AbstractCommand } from './abstract.command'
-export { Input } from './command.input.interface'
-export { CommandLoader } from './command.loader'
-export { ExecuteCommand } from './execute.command'
-export { CreateCommand } from './create.command'
-export { NewCommand } from './new.command'
+export { AbstractCommand } from './abstract.command';
+export { Input } from './command.input.interface';
+export { CommandLoader } from './command.loader';
+export { ExecuteCommand } from './execute.command';
+export { CreateCommand } from './create.command';
+export { NewCommand } from './new.command';

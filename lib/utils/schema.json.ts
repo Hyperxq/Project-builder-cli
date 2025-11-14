@@ -1,5 +1,5 @@
-import { Schematic, Schematics } from '../actions/actions.interfaces'
-import { fetchData } from './fetch-data'
+import { Schematic, Schematics } from '../actions/actions.interfaces';
+import { fetchData } from './fetch-data';
 
 export async function getSchemaFromPackage(
   urlBase: string,

@@ -1,6 +1,6 @@
-import { Command } from 'commander'
-import { AbstractCommand } from './abstract.command'
-import { Input } from './command.input.interface'
+import { Command } from 'commander';
+import { AbstractCommand } from './abstract.command';
+import { Input } from './command.input.interface';
 
 export class CreateCommand extends AbstractCommand {
   public load(program: Command) {
@@ -18,23 +18,23 @@ export class CreateCommand extends AbstractCommand {
       )
       .addHelpCommand('create --help', 'show assistance')
       .action(async (templateId: string, command: { [key: string]: any }) => {
-        const dryRun: boolean = command?.dryRun
-        const skipInstall: boolean = command?.skipInstall
+        const dryRun: boolean = command?.dryRun;
+        const skipInstall: boolean = command?.skipInstall;
 
-        const options: Input[] = []
+        const options: Input[] = [];
         const inputs: Input[] = [
           {
             name: 'template-id',
             value: templateId,
           },
-        ]
+        ];
 
         // TODO: implement the logic behind these flags.
 
-        options.push({ name: 'dry-run', value: dryRun })
-        options.push({ name: 'skip-install', value: skipInstall })
+        options.push({ name: 'dry-run', value: dryRun });
+        options.push({ name: 'skip-install', value: skipInstall });
 
-        await this.action.handle(inputs, options)
-      })
+        await this.action.handle(inputs, options);
+      });
   }
 }

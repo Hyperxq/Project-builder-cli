@@ -1,8 +1,8 @@
-import { kebabCase } from 'case-anything'
-import { Command } from 'commander'
-import { logger } from '../utils'
-import { AbstractCommand } from './abstract.command'
-import { Input } from './command.input.interface'
+import { kebabCase } from 'case-anything';
+import { Command } from 'commander';
+import { logger } from '../utils';
+import { AbstractCommand } from './abstract.command';
+import { Input } from './command.input.interface';
 
 export class NewCommand extends AbstractCommand {
   public load(program: Command) {
@@ -26,11 +26,11 @@ export class NewCommand extends AbstractCommand {
           if (
             !['npm', 'yarn', 'pnpm', 'cnpm', 'bun'].some((v) => value === v)
           ) {
-            logger.error(`You entered a not valid package manager`)
-            process.exit(1)
+            logger.error(`You entered a not valid package manager`);
+            process.exit(1);
           }
 
-          return value
+          return value;
         },
         'npm',
       )
@@ -49,28 +49,28 @@ export class NewCommand extends AbstractCommand {
           author: string,
           options: { [key: string]: any },
         ) => {
-          const inputs: Input[] = []
-          const flags: Input[] = []
+          const inputs: Input[] = [];
+          const flags: Input[] = [];
 
           Object.entries(options).forEach(([name, value]) => {
             flags.push({
               name: kebabCase(name),
               value,
-            })
-          })
+            });
+          });
 
           inputs.push({
             name: 'name',
             value: libraryName,
-          })
+          });
 
           inputs.push({
             name: 'author',
             value: author,
-          })
+          });
 
-          await this.action.handle(inputs, flags)
+          await this.action.handle(inputs, flags);
         },
-      )
+      );
   }
 }

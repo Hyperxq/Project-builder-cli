@@ -4,7 +4,7 @@ export const packageManagerCommands = {
   pnpm: 'add',
   cnpm: 'install',
   bun: 'add',
-}
+};
 
 export const packageManagerUninstallCommands = {
   npm: 'uninstall',
@@ -12,4 +12,4 @@ export const packageManagerUninstallCommands = {
   pnpm: 'remove',
   cnpm: 'uninstall',
   bun: 'remove',
-}
+};
