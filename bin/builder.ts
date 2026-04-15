@@ -46,7 +46,8 @@ function addColorsToHelp() {
 declare const __PKG_VERSION__: string;
 
 function setVersionFlag(program: Command) {
-  const version = typeof __PKG_VERSION__ !== 'undefined' ? __PKG_VERSION__ : '0.0.0';
+  const version =
+    typeof __PKG_VERSION__ !== 'undefined' ? __PKG_VERSION__ : '0.0.0';
 
   program.version(version, '-v, --version', 'Output the current version.');
 }
