@@ -1,5 +1,6 @@
 // rslib.config.ts
 import { defineConfig } from '@rslib/core'
+import pkg from './package.json'
 
 export default defineConfig({
   // 1) Single entry: your CLI
@@ -8,6 +9,9 @@ export default defineConfig({
       builder: './bin/builder.ts',
     },
     tsconfigPath: './tsconfig.json',
+    define: {
+      __PKG_VERSION__: JSON.stringify(pkg.version),
+    },
   },
 
   // 2) One bundled CJS build
