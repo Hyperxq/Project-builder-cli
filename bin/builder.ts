@@ -2,8 +2,6 @@
 
 import chalk from 'chalk';
 import { Command, program } from 'commander';
-import { readFileSync } from 'fs';
-import path from 'path';
 import { CommandLoader } from '../lib/commands';
 import { loadEffectiveConfig, logger } from '../lib/utils';
 import logo from './logo';
@@ -45,13 +43,13 @@ function addColorsToHelp() {
   return `${header}\n${colored}`;
 }
 
+declare const __PKG_VERSION__: string;
+
 function setVersionFlag(program: Command) {
-  const packageJsonPath = path.join(__dirname, '../package.json');
-  const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
-  const version = packageJson.version;
+  const version =
+    typeof __PKG_VERSION__ !== 'undefined' ? __PKG_VERSION__ : '0.0.0';
 
   program.version(version, '-v, --version', 'Output the current version.');
-  // program.parse(process.argv);
 }
 
 function checkNodeVersion() {
