@@ -1,5 +1,7 @@
 # Project Builder CLI
 
+> This is the legacy TypeScript CLI (`@pbuilder/cli` 1.x). The current Project Builder, with deterministic code generation for AI coding agents, is documented at [schematics.pbuilder.dev](https://schematics.pbuilder.dev/).
+
 The Project Builder CLI is a versatile command-line interface tool designed to streamline and enhance the development workflow for Angular developers. By providing the capability to execute Angular schematics outside of an Angular workspace, create new Angular schematics project libraries, and automate complex project setups, this CLI tool offers a comprehensive solution for modern development challenges.
 
 ![image](https://github.com/Hyperxq/Project-builder-cli/assets/22332354/d3873283-cf42-4d3d-9330-63508f4d116e)
